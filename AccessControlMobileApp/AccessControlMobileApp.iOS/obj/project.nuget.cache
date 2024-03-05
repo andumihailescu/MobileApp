@@ -1,0 +1,12 @@
+{
+  "version": 2,
+  "dgSpecHash": "lkW3H4IMDK73R8mhJafRUlc6Iukek9sNT+pUrIK48T/W0fPCMAGbUpDV/kj/nHwg9agqjCOAcH9Z0WwJE0s9iw==",
+  "success": true,
+  "projectFilePath": "D:\\School\\AccessControlMobileApp\\AccessControlMobileApp\\AccessControlMobileApp.iOS\\AccessControlMobileApp.iOS.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\andu_\\.nuget\\packages\\system.numerics.vectors\\4.5.0\\system.numerics.vectors.4.5.0.nupkg.sha512",
+    "C:\\Users\\andu_\\.nuget\\packages\\xamarin.essentials\\1.7.0\\xamarin.essentials.1.7.0.nupkg.sha512",
+    "C:\\Users\\andu_\\.nuget\\packages\\xamarin.forms\\5.0.0.2196\\xamarin.forms.5.0.0.2196.nupkg.sha512"
+  ],
+  "logs": []
+}
