@@ -30,8 +30,10 @@
     </Shell.Resources>
 
     <TabBar>
+        <ShellContent Title="NFC" Icon="icon_feed.png" Route="NfcPage" ContentTemplate="{DataTemplate local:NfcPage}" />
+        <ShellContent Title="Bluetooth" Icon="icon_feed.png" Route="BluetoothPage" ContentTemplate="{DataTemplate local:BluetoothPage}" />
+        <ShellContent Title="Wi-Fi" Icon="icon_feed.png" Route="WiFiPage" ContentTemplate="{DataTemplate local:WiFiPage}" />
         <ShellContent Title="About" Icon="icon_about.png" Route="AboutPage" ContentTemplate="{DataTemplate local:AboutPage}" />
-        <ShellContent Title="Browse" Icon="icon_feed.png" ContentTemplate="{DataTemplate local:ItemsPage}" />
     </TabBar>
 
     <!--

@@ -25,11 +25,11 @@ androidgeneratejnimarshalmethods=false
 os=windows_nt
 androidincludedebugsymbols=true
 androidpackagenamingpolicy=lowercasecrc64
-_nugetassetstimestamp=638446548463329971
+_nugetassetstimestamp=638456876657962329
 typemapkind=strings-asm
 androidsupportedabis=arm64-v8a
 armeabi-v7a
 x86
 x86_64
 androidmanifestplaceholders=
-projectfullpath=d:\school\accesscontrolmobileapp\accesscontrolmobileapp\accesscontrolmobileapp.android\accesscontrolmobileapp.android.csproj
+projectfullpath=d:\school\mobileapp\accesscontrolmobileapp\accesscontrolmobileapp.android\accesscontrolmobileapp.android.csproj

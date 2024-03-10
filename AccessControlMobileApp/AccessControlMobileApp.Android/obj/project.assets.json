@@ -3414,11 +3414,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "D:\\School\\AccessControlMobileApp\\AccessControlMobileApp\\AccessControlMobileApp.Android\\AccessControlMobileApp.Android.csproj",
+      "projectUniqueName": "D:\\School\\MobileApp\\AccessControlMobileApp\\AccessControlMobileApp.Android\\AccessControlMobileApp.Android.csproj",
       "projectName": "AccessControlMobileApp.Android",
-      "projectPath": "D:\\School\\AccessControlMobileApp\\AccessControlMobileApp\\AccessControlMobileApp.Android\\AccessControlMobileApp.Android.csproj",
+      "projectPath": "D:\\School\\MobileApp\\AccessControlMobileApp\\AccessControlMobileApp.Android\\AccessControlMobileApp.Android.csproj",
       "packagesPath": "C:\\Users\\andu_\\.nuget\\packages\\",
-      "outputPath": "D:\\School\\AccessControlMobileApp\\AccessControlMobileApp\\AccessControlMobileApp.Android\\obj\\",
+      "outputPath": "D:\\School\\MobileApp\\AccessControlMobileApp\\AccessControlMobileApp.Android\\obj\\",
       "projectStyle": "PackageReference",
       "skipContentFileWrite": true,
       "fallbackFolders": [
@@ -3439,11 +3439,16 @@
       "frameworks": {
         "monoandroid13.0": {
           "projectReferences": {
-            "D:\\School\\AccessControlMobileApp\\AccessControlMobileApp\\AccessControlMobileApp\\AccessControlMobileApp.csproj": {
-              "projectPath": "D:\\School\\AccessControlMobileApp\\AccessControlMobileApp\\AccessControlMobileApp\\AccessControlMobileApp.csproj"
+            "D:\\School\\MobileApp\\AccessControlMobileApp\\AccessControlMobileApp\\AccessControlMobileApp.csproj": {
+              "projectPath": "D:\\School\\MobileApp\\AccessControlMobileApp\\AccessControlMobileApp\\AccessControlMobileApp.csproj"
             }
           }
         }
+      },
+      "restoreAuditProperties": {
+        "enableAudit": "true",
+        "auditLevel": "low",
+        "auditMode": "direct"
       }
     },
     "frameworks": {
