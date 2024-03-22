@@ -3,34 +3,45 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:d="http://xamarin.com/schemas/2014/forms/design"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="clr-namespace:AccessControlMobileApp.ViewModels"
              mc:Ignorable="d"
              x:Class="AccessControlMobileApp.Views.LoginPage"
              Shell.NavBarIsVisible="False">
+
+
+    <ContentPage.BindingContext>
+        <vm:LoginViewModel />
+    </ContentPage.BindingContext>
+
     <ContentPage.Content>
         <StackLayout Padding="10,0,10,0" VerticalOptions="Center">
             <Entry 
                 x:Name="username"
+                Text="{Binding Username, Mode=OneWayToSource}"
                 Placeholder="Username"
                 TextTransform="Uppercase"
                 MaxLength="8"
                 IsSpellCheckEnabled="False"
                 IsTextPredictionEnabled="False"
                 PlaceholderColor="Gray"
-                TextColor="Black">
-            </Entry>
+                TextColor="Black"/>
             <Entry 
                 x:Name="password"
+                Text="{Binding Password, Mode=OneWayToSource}"
                 Placeholder="Password"
                 IsSpellCheckEnabled="False"
                 IsTextPredictionEnabled="False"
                 IsPassword="True"
                 PlaceholderColor="Gray"
-                TextColor="Black">
-            </Entry>
+                TextColor="Black"/>
             <Button 
                 VerticalOptions="Center" 
                 Text="Login" 
                 Command="{Binding LoginCommand}"/>
+            <Label
+                x:Name="label"
+                Text="{Binding Message}"
+                TextColor="Red"/>
         </StackLayout>
     </ContentPage.Content>
 </ContentPage>

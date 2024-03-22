@@ -7,11 +7,11 @@ using Xamarin.Forms;
 
 namespace AccessControlMobileApp.ViewModels
 {
-    public class WiFiViewModel : BaseViewModel
+    public class WiFiViewModel : BindableObject
     {
         public WiFiViewModel()
         {
-            Title = "Wi-Fi";
+            
         }
     }
 }

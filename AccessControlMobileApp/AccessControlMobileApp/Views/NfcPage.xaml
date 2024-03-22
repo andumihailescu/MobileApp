@@ -3,7 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="AccessControlMobileApp.Views.NfcPage"
              xmlns:vm="clr-namespace:AccessControlMobileApp.ViewModels"
-             Title="{Binding Title}">
+             Title="NFC">
 
     <ContentPage.BindingContext>
         <vm:NfcViewModel />

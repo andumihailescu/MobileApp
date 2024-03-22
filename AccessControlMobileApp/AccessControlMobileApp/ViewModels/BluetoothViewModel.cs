@@ -7,11 +7,11 @@ using Xamarin.Forms;
 
 namespace AccessControlMobileApp.ViewModels
 {
-    public class BluetoothViewModel : BaseViewModel
+    public class BluetoothViewModel : BindableObject
     {
         public BluetoothViewModel()
         {
-            Title = "Bluetooth";
+            
         }
     }
 }

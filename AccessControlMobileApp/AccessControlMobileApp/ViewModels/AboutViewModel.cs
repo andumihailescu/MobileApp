@@ -6,16 +6,14 @@ using Xamarin.Forms;
 
 namespace AccessControlMobileApp.ViewModels
 {
-    public class AboutViewModel : BaseViewModel
+    public class AboutViewModel : BindableObject
     {
         public Command LgtCommand { get; }
 
         public AboutViewModel()
         {
-            Title = "About";
             OpenWebCommand = new Command(async () => await Browser.OpenAsync("https://aka.ms/xamarin-quickstart"));
-            //LogoutCommand = new Command(async () => await Shell.Current.GoToAsync($"//LoginPage"));
-            LgtCommand = new Command(OnLogoutClicked);
+            LogoutCommand = new Command(OnLogoutClicked);
         }
 
         public ICommand OpenWebCommand { get; }

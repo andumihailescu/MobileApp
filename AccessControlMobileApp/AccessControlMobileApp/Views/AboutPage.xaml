@@ -3,7 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="AccessControlMobileApp.Views.AboutPage"
              xmlns:vm="clr-namespace:AccessControlMobileApp.ViewModels"
-             Title="{Binding Title}">
+             Title="About">
     
     <ContentPage.BindingContext>
         <vm:AboutViewModel />
@@ -42,7 +42,7 @@
                     </Label.FormattedText>
                 </Label>
                 <Button Margin="0,10,0,0" Text="Log Out"
-                        Command="{Binding LgtCommand}"
+                        Command="{Binding LogoutCommand}"
                         BackgroundColor="{StaticResource Primary}"
                         TextColor="White" />
             </StackLayout>

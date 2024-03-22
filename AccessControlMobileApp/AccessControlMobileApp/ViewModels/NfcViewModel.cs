@@ -7,11 +7,12 @@ using Xamarin.Forms;
 
 namespace AccessControlMobileApp.ViewModels
 {
-    public class NfcViewModel : BaseViewModel
+    public class NfcViewModel : BindableObject
     {
         public NfcViewModel()
         {
-            Title = "NFC";
+
         }
+
     }
 }

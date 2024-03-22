@@ -1,0 +1,4 @@
+<resources>
+	<string name="card_title">PhoneTag</string>
+	<string name="service_name">HostCardEmulation</string>
+</resources>
