@@ -5,6 +5,7 @@ using System.Text;
 using Android.App;
 using Android.Content;
 using Android.Util;
+using Xamarin.Forms;
 
 namespace AccessControlMobileApp.Droid
 {
@@ -29,10 +30,20 @@ namespace AccessControlMobileApp.Droid
         private static readonly byte[] UNKNOWN_CMD_SW = HexStringToByteArray("0000");
         private static readonly byte[] SELECT_APDU = BuildSelectApdu(SAMPLE_LOYALTY_CARD_AID);
 
+        private static bool isActivated = false;
+
+        public override void OnCreate()
+        {
+            base.OnCreate();
+            MessagingCenter.Subscribe<object, bool>(this, "IsActivated", (sender, iisActivated) =>
+            {
+                isActivated = iisActivated;
+            });
+        }
 
         public override void OnDeactivated(DeactivationReason reason)
         {
-
+            
         }
 
         public static byte[] BuildSelectApdu(string aid)
@@ -69,11 +80,17 @@ namespace AccessControlMobileApp.Droid
 
             if (arrayEquals)
             {
-                //String account = AccountStorage.GetAccount(this);
-                String account = "112100995";
-                byte[] accountBytes = Encoding.UTF8.GetBytes(account);
-                Log.Info(TAG, "Sending account number: " + account);
-                return ConcatArrays(accountBytes, SELECT_OK_SW);
+                if (isActivated)
+                {
+                    String account = "112100995";
+                    byte[] accountBytes = Encoding.UTF8.GetBytes(account);
+                    Log.Info(TAG, "Sending account number: " + account);
+                    return ConcatArrays(accountBytes, SELECT_OK_SW);
+                }
+                else
+                {
+                    return UNKNOWN_CMD_SW;
+                }
             }
             else
             {

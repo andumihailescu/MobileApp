@@ -1,26 +1,20 @@
-﻿using AccessControlMobileApp.Views;
+﻿using AccessControlMobileApp.Services;
+using AccessControlMobileApp.Views;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Text;
+using System.Threading.Tasks;
 using System.Windows.Input;
+using Xamarin.Essentials;
 using Xamarin.Forms;
 
 namespace AccessControlMobileApp.ViewModels
 {
-    public class LoginViewModel : INotifyPropertyChanged
+    public class LoginViewModel : BaseViewModel
     {
-        public ICommand LoginCommand { get; }
-
+        //review the set
         private string _username;
-        private string _password;
-        private string _message;
-
-        public LoginViewModel()
-        {
-            LoginCommand = new Command(OnLoginClicked);
-        }
-
         public string Username
         {
             get { return _username; }
@@ -29,10 +23,11 @@ namespace AccessControlMobileApp.ViewModels
                 if (_username != value)
                 {
                     _username = value;
+                    OnPropertyChanged();
                 }
             }
         }
-
+        private string _password;
         public string Password
         {
             get { return _password; }
@@ -41,40 +36,100 @@ namespace AccessControlMobileApp.ViewModels
                 if (_password != value)
                 {
                     _password = value;
+                    OnPropertyChanged();
                 }
             }
         }
-
-        public string Message
+        private bool _isBusy;
+        public bool IsBusy
         {
-            get { return _message; }
+            get { return _isBusy; }
             set
             {
-                if (_message != value)
+                if (_isBusy != value)
                 {
-                    _message = value;
-                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("Message"));
+                    _isBusy = value;
+                    OnPropertyChanged();
                 }
             }
         }
 
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        public async void OnLoginClicked(object obj)
+        private bool _result;
+        public bool Result
         {
-            if ((Username == "UIE99708") && (Password == "1234"))
+            get { return _result; }
+            set
             {
-                Message = "";
-                // Prefixing with `//` switches to a different navigation stack instead of pushing to the active one
-                Username = "";
-                Password = "";
-                await Shell.Current.GoToAsync($"//{nameof(AboutPage)}");
+                if (_result != value)
+                {
+                    _result = value;
+                    OnPropertyChanged();
+                }
             }
-            else
+        }
+
+        public Command LoginCommand { get; set; }
+        public Command RegisterCommand { get; set; }
+
+        public LoginViewModel()
+        {
+            LoginCommand = new Command(async () => await OnLoginClicked());
+            RegisterCommand = new Command(async () => await OnRegisterClicked());
+        }
+
+        private async Task OnLoginClicked()
+        {
+            if (IsBusy) return;
+            try
             {
-                Message = "Wrong creditentials!";
+                IsBusy = true;
+                var userService = new UserService();
+                Result = await userService.LoginUser(Username, Password);
+                if (Result)
+                {
+                    Preferences.Set("Username", Username);
+                    Application.Current.MainPage = new RequestAccessPage();
+                }
+                else
+                {
+                    await Application.Current.MainPage.DisplayAlert("Error", "Invalid Username or Password", "OK");
+                }
             }
-            
+            catch (Exception ex)
+            {
+                await Application.Current.MainPage.DisplayAlert("Error", ex.Message, "OK");
+            }
+            finally
+            {
+                IsBusy = false;
+            }
+        }
+
+        private async Task OnRegisterClicked()
+        {
+            if (IsBusy) return;
+            try
+            {
+                IsBusy = true;
+                var userService = new UserService();
+                Result = await userService.RegisterUser(Username, Password);
+                if (Result)
+                {
+                    await Application.Current.MainPage.DisplayAlert("Seccess", "User Registered", "OK");
+                }
+                else
+                {
+                    await Application.Current.MainPage.DisplayAlert("Error", "User already exists", "OK");
+                }
+            }
+            catch (Exception ex)
+            {
+                await Application.Current.MainPage.DisplayAlert("Error", ex.Message, "OK");
+            }
+            finally
+            {
+                IsBusy = false;
+            }
         }
     }
 }

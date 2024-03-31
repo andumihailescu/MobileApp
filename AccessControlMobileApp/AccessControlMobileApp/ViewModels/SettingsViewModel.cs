@@ -7,9 +7,9 @@ using Xamarin.Forms;
 
 namespace AccessControlMobileApp.ViewModels
 {
-    public class NfcViewModel : BindableObject
+    public class SettingsViewModel : BaseViewModel
     {
-        public NfcViewModel()
+        public SettingsViewModel()
         {
 
         }

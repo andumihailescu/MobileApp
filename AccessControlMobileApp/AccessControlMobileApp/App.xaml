@@ -7,26 +7,81 @@
     -->
     <Application.Resources>
         <ResourceDictionary>
-            <Color x:Key="Primary">#2196F3</Color>
-            <Style TargetType="Button">
-                <Setter Property="TextColor" Value="White"></Setter>
-                <Setter Property="VisualStateManager.VisualStateGroups">
+            <Color x:Key="PrimaryColor">#228b22</Color>
+            <Color x:Key="SecondaryColor">#50c878</Color>
+            <Color x:Key="BackgroundColor">#fffaa0</Color>
+            <Color x:Key="ErrorColor">#ff0000</Color>
+            <Color x:Key="TextColor">#000000</Color>
+
+        </ResourceDictionary>
+        <ControlTemplate x:Key="RadioButtonTemplate">
+            <Frame BorderColor="White"
+           BackgroundColor="White"
+           HasShadow="False"
+           HeightRequest="60"
+           WidthRequest="300"
+           HorizontalOptions="Center"
+           VerticalOptions="Start"
+           Padding="0">
+                <VisualStateManager.VisualStateGroups>
                     <VisualStateGroupList>
-                        <VisualStateGroup x:Name="CommonStates">
-                            <VisualState x:Name="Normal">
+                        <VisualStateGroup x:Name="CheckedStates">
+                            <VisualState x:Name="Checked">
                                 <VisualState.Setters>
-                                    <Setter Property="BackgroundColor" Value="{StaticResource Primary}" />
+                                    <Setter Property="BorderColor"
+                                    Value="{StaticResource SecondaryColor}" />
+                                    <Setter TargetName="check"
+                                    Property="Opacity"
+                                    Value="1" />
+                                    <Setter Property="VerticalOptions"
+                                    Value="Center"/>
                                 </VisualState.Setters>
                             </VisualState>
-                            <VisualState x:Name="Disabled">
+                            <VisualState x:Name="Unchecked">
                                 <VisualState.Setters>
-                                    <Setter Property="BackgroundColor" Value="#332196F3" />
+                                    <Setter TargetName="check"
+                                    Property="Opacity"
+                                    Value="0" />
+                                    <Setter Property="VerticalOptions"
+                                    Value="Center"/>
                                 </VisualState.Setters>
                             </VisualState>
                         </VisualStateGroup>
                     </VisualStateGroupList>
-                </Setter>
-            </Style>
-        </ResourceDictionary>        
+                </VisualStateManager.VisualStateGroups>
+                <Grid Margin="4"
+              WidthRequest="100">
+                    <Grid WidthRequest="18"
+                  HeightRequest="18"
+                  HorizontalOptions="Start"
+                  VerticalOptions="Center">
+                        <Ellipse Stroke="Black"
+                         Fill="White"
+                         WidthRequest="16"
+                         HeightRequest="16"
+                         HorizontalOptions="Center"
+                         VerticalOptions="Center" />
+                        <Ellipse x:Name="check"
+                         Fill="Black"
+                         WidthRequest="8"
+                         HeightRequest="8"
+                         HorizontalOptions="Center"
+                         VerticalOptions="Center" />
+                    </Grid>
+                    <Grid VerticalOptions="Center"
+                  HorizontalOptions="Start"
+                  Padding="40, 0, 0,  0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <ContentPresenter HorizontalOptions="Center" VerticalOptions="Center" />
+                    </Grid>
+                </Grid>
+            </Frame>
+        </ControlTemplate>
+        <Style TargetType="RadioButton">
+            <Setter Property="ControlTemplate"
+            Value="{StaticResource RadioButtonTemplate}" />
+        </Style>
     </Application.Resources>
 </Application>

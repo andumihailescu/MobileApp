@@ -17,7 +17,7 @@
         <StackLayout Padding="10,0,10,0" VerticalOptions="Center">
             <Entry 
                 x:Name="username"
-                Text="{Binding Username, Mode=OneWayToSource}"
+                Text="{Binding Username, Mode=TwoWay}"
                 Placeholder="Username"
                 TextTransform="Uppercase"
                 MaxLength="8"
@@ -27,7 +27,7 @@
                 TextColor="Black"/>
             <Entry 
                 x:Name="password"
-                Text="{Binding Password, Mode=OneWayToSource}"
+                Text="{Binding Password, Mode=TwoWay}"
                 Placeholder="Password"
                 IsSpellCheckEnabled="False"
                 IsTextPredictionEnabled="False"
@@ -37,11 +37,14 @@
             <Button 
                 VerticalOptions="Center" 
                 Text="Login" 
-                Command="{Binding LoginCommand}"/>
-            <Label
-                x:Name="label"
-                Text="{Binding Message}"
-                TextColor="Red"/>
+                Command="{Binding LoginCommand}"
+                BackgroundColor="{StaticResource PrimaryColor}"/>
+            <Button 
+                VerticalOptions="Center" 
+                Text="Register"
+                Command="{Binding RegisterCommand}"
+                BackgroundColor="{StaticResource PrimaryColor}"/>
+            
         </StackLayout>
     </ContentPage.Content>
 </ContentPage>
