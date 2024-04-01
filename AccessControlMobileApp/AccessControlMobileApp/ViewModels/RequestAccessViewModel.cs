@@ -1,4 +1,6 @@
-﻿using AccessControlMobileApp.Views;
+﻿using AccessControlMobileApp.Models;
+using AccessControlMobileApp.Services;
+using AccessControlMobileApp.Views;
 using System;
 using System.Threading.Tasks;
 using System.Windows.Input;
@@ -10,42 +12,15 @@ namespace AccessControlMobileApp.ViewModels
     public class RequestAccessViewModel : BaseViewModel
     {
         
-
-        private bool _nfcRadioButtonChecked;
-        public bool NfcRadioButtonChecked
+        private string _textBox;
+        public string TextBox
         {
-            get { return _nfcRadioButtonChecked; }
+            get { return _textBox; }
             set
             {
-                if (_nfcRadioButtonChecked != value)
+                if (_textBox != value)
                 {
-                    _nfcRadioButtonChecked = value;
-                    OnPropertyChanged();
-                }
-            }
-        }
-        private bool _bluetoothRadioButtonChecked;
-        public bool BluetoothRadioButtonChecked
-        {
-            get { return _bluetoothRadioButtonChecked; }
-            set
-            {
-                if (_bluetoothRadioButtonChecked != value)
-                {
-                    _bluetoothRadioButtonChecked = value;
-                    OnPropertyChanged();
-                }
-            }
-        }
-        private bool _wifiRadioButtonChecked;
-        public bool WifiRadioButtonChecked
-        {
-            get { return _wifiRadioButtonChecked; }
-            set
-            {
-                if (_wifiRadioButtonChecked != value)
-                {
-                    _wifiRadioButtonChecked = value;
+                    _textBox = value;
                     OnPropertyChanged();
                 }
             }
@@ -61,9 +36,11 @@ namespace AccessControlMobileApp.ViewModels
             RequestAccessCommand = new Command(OnRequestAccessClicked);
             GoToSettingsCommand = new Command(async () => await GoToSettingsClicked());
             LogoutCommand = new Command(OnLogoutClicked);
+
+            var userService = App.UserService;
+            TextBox = TextBox + "/n" + userService.UserAuthCredentials.User;
+            TextBox = TextBox + "/n" + userService.UserAuthCredentials.User.Uid;
         }
-
-
 
         public void OnRequestAccessClicked(object obj)
         {
@@ -78,6 +55,8 @@ namespace AccessControlMobileApp.ViewModels
         public void OnLogoutClicked()
         {
             MessagingCenter.Send<object, bool>(this, "IsActivated", false);
+            var userService = App.UserService;
+            userService.LogoutUser();
             Application.Current.MainPage = new LoginPage();
         }
     }

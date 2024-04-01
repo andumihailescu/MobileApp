@@ -7,7 +7,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AccessControlMobileApp.Andr
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AccessControlMobileApp.iOS", "AccessControlMobileApp\AccessControlMobileApp.iOS\AccessControlMobileApp.iOS.csproj", "{9374B593-FF6B-4AB7-8014-F7FEC9AA9BC5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AccessControlMobileApp", "AccessControlMobileApp\AccessControlMobileApp\AccessControlMobileApp.csproj", "{668CE39F-9276-4B4D-A21E-4911E4A3D68E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AccessControlMobileApp", "AccessControlMobileApp\AccessControlMobileApp\AccessControlMobileApp.csproj", "{668CE39F-9276-4B4D-A21E-4911E4A3D68E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

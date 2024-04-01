@@ -9,37 +9,22 @@
         <vm:RequestAccessViewModel />
     </ContentPage.BindingContext>
 
-    <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="*" />
-        </Grid.RowDefinitions>
-        <StackLayout Orientation="Vertical" Padding="30,24,30,24" Spacing="10">
-            <Label Text="Choose access method" 
-                   TextColor="Black" 
-                   FontSize="Medium"/>
-            <RadioButton Content="NFC"
-                         IsVisible="{x:OnPlatform Android=True, iOS=False}" 
-                         TextColor="Black"
-                         IsChecked="{Binding NfcRadioButtonChecked}"/>
-            <RadioButton Content="Bluetooth" 
-                         TextColor="Black"
-                         IsChecked="{Binding BluetoothRadioButtonChecked}"/>
-            <RadioButton Content="Wi-Fi" 
-                         TextColor="Black"
-                         IsChecked="{Binding WifiRadioButtonChecked}"/>
-            <Button Margin="0,10,0,0" Text="Request Access"
+    <StackLayout Orientation="Vertical" Padding="30,24,30,24" Spacing="10">
+        <Button Margin="0,10,0,0" Text="Request Access"
                     Command="{Binding RequestAccessCommand}"
                     BackgroundColor="{StaticResource PrimaryColor}"
                     TextColor="White" />
-            <Button Margin="0,10,0,0" Text="Settings"
+        <Button Margin="0,10,0,0" Text="Settings"
                     Command="{Binding GoToSettingsCommand}"
                     BackgroundColor="{StaticResource PrimaryColor}"
                     TextColor="White" />
-            <Button Margin="0,10,0,0" Text="Log Out"
+        <Button Margin="0,10,0,0" Text="Log Out"
                     Command="{Binding LogoutCommand}"
                     BackgroundColor="{StaticResource PrimaryColor}"
                     TextColor="White" />
-        </StackLayout>
-    </Grid>
+        <ScrollView>
+            <Editor x:Name="editor"
+                        Text="{Binding TextBox, Mode=TwoWay}"/>
+        </ScrollView>
+    </StackLayout>
 </ContentPage>

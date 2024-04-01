@@ -2,17 +2,27 @@
 using AccessControlMobileApp.Views;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Text;
 using System.Threading.Tasks;
-using System.Windows.Input;
-using Xamarin.Essentials;
 using Xamarin.Forms;
 
 namespace AccessControlMobileApp.ViewModels
 {
-    public class LoginViewModel : BaseViewModel
+    public  class RegisterViewModel : BaseViewModel
     {
+        private string _username;
+        public string Username
+        {
+            get { return _username; }
+            set
+            {
+                if (_username != value)
+                {
+                    _username = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
         private string _email;
         public string Email
         {
@@ -66,32 +76,25 @@ namespace AccessControlMobileApp.ViewModels
             }
         }
 
-        public Command LoginCommand { get; set; }
-        public Command GoToRegisterPageCommand { get; set; }
-
-        public LoginViewModel()
+        public Command RegisterCommand { get; set; }
+        public RegisterViewModel()
         {
-            LoginCommand = new Command(async () => await OnLoginClicked());
-            GoToRegisterPageCommand = new Command(async () => await OnGoToRegisterClicked());
+            RegisterCommand = new Command(async () => await OnRegisterClicked());
         }
 
-        private async Task OnLoginClicked()
+        private async Task OnRegisterClicked()
         {
             var userService = App.UserService;
-            Result = await userService.LoginUser(Email, Password);
+            Result = await userService.RegisterUser(Email, Password, Username);
             if (Result == null)
             {
-                Application.Current.MainPage = new RequestAccessPage();
+                await Application.Current.MainPage.DisplayAlert("Seccess", "User Registered", "OK");
+                await Application.Current.MainPage.Navigation.PopModalAsync();
             }
             else
             {
                 await Application.Current.MainPage.DisplayAlert("Error", Result, "OK");
             }
-        }
-
-        private async Task OnGoToRegisterClicked()
-        {
-            await Application.Current.MainPage.Navigation.PushModalAsync(new RegisterPage());
         }
     }
 }

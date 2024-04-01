@@ -10,11 +10,24 @@
     </ContentPage.BindingContext>
 
     <ContentPage.Content>
-        <StackLayout>
-            <Label
-                Text="This is Settings"
-                TextColor="White"
-                />
+        <StackLayout Orientation="Vertical" Padding="30,24,30,24" Spacing="10">
+            <Label Text="Choose access method" 
+                   TextColor="Black" 
+                   FontSize="Medium"/>
+            <RadioButton Content="NFC"
+                 IsVisible="{x:OnPlatform Android=True, iOS=False}" 
+                 TextColor="Black"
+                 IsChecked="{Binding NfcRadioButtonChecked}"/>
+            <RadioButton Content="Bluetooth" 
+                 TextColor="Black"
+                 IsChecked="{Binding BluetoothRadioButtonChecked}"/>
+            <RadioButton Content="Wi-Fi" 
+                 TextColor="Black"
+                 IsChecked="{Binding WifiRadioButtonChecked}"/>
+            <Button Margin="0,10,0,0" Text="Save Settings"
+                    Command="{Binding LogoutCommand}"
+                    BackgroundColor="{StaticResource PrimaryColor}"
+                    TextColor="White" />
         </StackLayout>
     </ContentPage.Content>
 </ContentPage>

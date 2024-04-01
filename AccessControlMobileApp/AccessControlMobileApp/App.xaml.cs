@@ -8,6 +8,7 @@ namespace AccessControlMobileApp
 {
     public partial class App : Application
     {
+        public static UserService UserService { get; private set; }
 
         public App()
         {
@@ -17,6 +18,7 @@ namespace AccessControlMobileApp
 
         protected override void OnStart()
         {
+            UserService = new UserService();
         }
 
         protected override void OnSleep()
