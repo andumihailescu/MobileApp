@@ -39,32 +39,6 @@ namespace AccessControlMobileApp.ViewModels
                 }
             }
         }
-        private bool _isBusy;
-        public bool IsBusy
-        {
-            get { return _isBusy; }
-            set
-            {
-                if (_isBusy != value)
-                {
-                    _isBusy = value;
-                    OnPropertyChanged();
-                }
-            }
-        }
-        private string _result;
-        public string Result
-        {
-            get { return _result; }
-            set
-            {
-                if (_result != value)
-                {
-                    _result = value;
-                    OnPropertyChanged();
-                }
-            }
-        }
 
         public Command LoginCommand { get; set; }
         public Command GoToRegisterPageCommand { get; set; }
@@ -78,14 +52,15 @@ namespace AccessControlMobileApp.ViewModels
         private async Task OnLoginClicked()
         {
             var userService = App.UserService;
-            Result = await userService.LoginUser(Email, Password);
-            if (Result == null)
+            var result = await userService.LoginUser(Email, Password);
+            if (result == null)
             {
+                await App.UserService.RequestUserData();
                 Application.Current.MainPage = new RequestAccessPage();
             }
             else
             {
-                await Application.Current.MainPage.DisplayAlert("Error", Result, "OK");
+                await Application.Current.MainPage.DisplayAlert("Error", result, "OK");
             }
         }
 

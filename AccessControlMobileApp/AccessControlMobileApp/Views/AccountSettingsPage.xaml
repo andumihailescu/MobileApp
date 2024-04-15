@@ -1,0 +1,47 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="AccessControlMobileApp.Views.AccountSettingsPage"
+             xmlns:vm="clr-namespace:AccessControlMobileApp.ViewModels">
+
+    <ContentPage.BindingContext>
+        <vm:AccountSettingsViewModel />
+    </ContentPage.BindingContext>
+
+    <ContentPage.Content>
+        <StackLayout Padding="10,0,10,0" VerticalOptions="Center">
+            <Entry 
+                x:Name="email"
+                Text="{Binding Email, Mode=TwoWay}"
+                Placeholder="Email"
+                TextTransform="Lowercase"
+                IsSpellCheckEnabled="False"
+                IsTextPredictionEnabled="False"
+                PlaceholderColor="Gray"
+                TextColor="Black"/>
+            <Entry 
+                x:Name="oldPassword"
+                Text="{Binding OldPassword, Mode=TwoWay}"
+                Placeholder="Old Password"
+                IsSpellCheckEnabled="False"
+                IsTextPredictionEnabled="False"
+                IsPassword="True"
+                PlaceholderColor="Gray"
+                TextColor="Black"/>
+            <Entry 
+                x:Name="newPassword"
+                Text="{Binding NewPassword, Mode=TwoWay}"
+                Placeholder="New Password"
+                IsSpellCheckEnabled="False"
+                IsTextPredictionEnabled="False"
+                IsPassword="True"
+                PlaceholderColor="Gray"
+                TextColor="Black"/>
+            <Button 
+                VerticalOptions="Center" 
+                Text="Save Settings" 
+                Command="{Binding SaveSettings}"
+                BackgroundColor="{StaticResource PrimaryColor}"/>
+        </StackLayout>
+    </ContentPage.Content>
+</ContentPage>

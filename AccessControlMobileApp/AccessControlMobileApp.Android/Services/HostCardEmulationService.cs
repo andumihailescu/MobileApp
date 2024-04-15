@@ -31,13 +31,18 @@ namespace AccessControlMobileApp.Droid
         private static readonly byte[] SELECT_APDU = BuildSelectApdu(SAMPLE_LOYALTY_CARD_AID);
 
         private static bool isActivated = false;
+        private static string userId = "";
 
         public override void OnCreate()
         {
             base.OnCreate();
-            MessagingCenter.Subscribe<object, bool>(this, "IsActivated", (sender, iisActivated) =>
+            MessagingCenter.Subscribe<object, bool>(this, "IsActivated", (sender, _isActivated) =>
             {
-                isActivated = iisActivated;
+                isActivated = _isActivated;
+            });
+            MessagingCenter.Subscribe<object, string>(this, "Userid", (sender, uid) =>
+            {
+                userId = uid;
             });
         }
 
@@ -82,10 +87,8 @@ namespace AccessControlMobileApp.Droid
             {
                 if (isActivated)
                 {
-                    String account = "112100995";
-                    byte[] accountBytes = Encoding.UTF8.GetBytes(account);
-                    Log.Info(TAG, "Sending account number: " + account);
-                    return ConcatArrays(accountBytes, SELECT_OK_SW);
+                    byte[] messageBytes = Encoding.UTF8.GetBytes(userId);
+                    return ConcatArrays(messageBytes, SELECT_OK_SW);
                 }
                 else
                 {

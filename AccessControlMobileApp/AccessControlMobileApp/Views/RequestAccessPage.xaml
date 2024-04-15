@@ -14,17 +14,22 @@
                     Command="{Binding RequestAccessCommand}"
                     BackgroundColor="{StaticResource PrimaryColor}"
                     TextColor="White" />
-        <Button Margin="0,10,0,0" Text="Settings"
-                    Command="{Binding GoToSettingsCommand}"
+        <Button Margin="0,10,0,0" Text="Modify User Settings"
+                    Command="{Binding GoToUserSettingsCommand}"
                     BackgroundColor="{StaticResource PrimaryColor}"
                     TextColor="White" />
+        <Button Margin="0,10,0,0" Text="Modify Email and Password"
+                Command="{Binding GoToAccountSettingsCommand}"
+                BackgroundColor="{StaticResource PrimaryColor}"
+                TextColor="White" />
         <Button Margin="0,10,0,0" Text="Log Out"
-                    Command="{Binding LogoutCommand}"
-                    BackgroundColor="{StaticResource PrimaryColor}"
-                    TextColor="White" />
-        <ScrollView>
-            <Editor x:Name="editor"
-                        Text="{Binding TextBox, Mode=TwoWay}"/>
-        </ScrollView>
+                Command="{Binding LogoutCommand}"
+                BackgroundColor="{StaticResource PrimaryColor}"
+                TextColor="White" />
+        <Button Margin="0,10,0,0" Text="Only admins"
+                IsVisible="{Binding HasAdminRights}"
+                Command="{Binding LogoutCommand}"
+                BackgroundColor="{StaticResource PrimaryColor}"
+                TextColor="White" />
     </StackLayout>
 </ContentPage>

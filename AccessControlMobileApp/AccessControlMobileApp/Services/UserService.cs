@@ -3,41 +3,80 @@ using Firebase.Database;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Firebase.Database.Query;
 using Firebase.Auth;
-using Firebase.Auth.Providers;
-using Firebase.Auth.Repository;
-using Xamarin.Essentials;
-using FirebaseAdmin.Auth;
-using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using static Google.Apis.Requests.BatchRequest;
-using Google.Apis.Auth.OAuth2;
 
 namespace AccessControlMobileApp.Services
 {
-    public class UserService
+    public class UserService : Database
     {
-        private FirebaseAuthClient userAuthClient;
-        private FirebaseClient userDataClient;
-        public Firebase.Auth.UserCredential UserAuthCredentials { get; private set; }
+        private UserCredential userAuthCredentials;
 
-        private FirebaseAuthConfig config = new FirebaseAuthConfig
-        {
-            ApiKey = "AIzaSyAHl-cJy8zniA0u7yQSu8hZ7avsToaAgEA",
-            AuthDomain = "accesscontrolmobileapp.firebaseapp.com",
-            Providers = new FirebaseAuthProvider[]
-            {
-                new EmailProvider()
-            }
-        };
+        public UserCredential UserAuthCredentials { get => userAuthCredentials; private set => userAuthCredentials = value; }
 
+        public UserData UserData { get => userData; set => userData = value; }
+
+        private UserData userData;
         public UserService()
         {
-            userDataClient = new FirebaseClient("https://accesscontrolmobileapp-default-rtdb.europe-west1.firebasedatabase.app/");
-            userAuthClient = new FirebaseAuthClient(config);            
+            UserData = new UserData();
+        }
+
+        public async Task RequestUserData()
+        {   
+            try
+            {
+                string userId = UserAuthCredentials.User.Uid;
+                string path = $"admins/{userId}";
+                var snapshot = await databaseClient.Child(path).OnceAsync<object>();
+                if (snapshot.Any())
+                {
+                    ParseDatabase(snapshot);
+                    UserData.IsAdmin = true;
+                }
+            }
+            catch (Exception ex)
+            {
+
+            }
+            try
+            {
+                string userId = UserAuthCredentials.User.Uid;
+                string path = $"users/{userId}";
+                var snapshot = await databaseClient.Child(path).OnceAsync<object>();
+                if (snapshot.Any())
+                {
+                    ParseDatabase(snapshot);
+                    UserData.IsAdmin = false;
+                } 
+            }
+            catch (Exception ex)
+            {
+                
+            }
+        }
+
+        private void ParseDatabase(IReadOnlyCollection<FirebaseObject<object>> snapshot)
+        {
+            int i = 0;
+            foreach (var item in snapshot)
+            {
+                switch (i)
+                {
+                    case 0:
+                        UserData.AccessLevel = Convert.ToInt32(item.Object.ToString());
+                        break;
+                    case 1:
+                        UserData.PreferedAccessMethod = Convert.ToInt32(item.Object.ToString());
+                        break;
+                    case 2:
+                        UserData.Username = item.Object.ToString();
+                        break;
+                }
+                i++;
+            }
         }
 
         public async Task<string> LoginUser(string email, string password)
@@ -59,27 +98,26 @@ namespace AccessControlMobileApp.Services
             try
             {
                 UserAuthCredentials = await userAuthClient.CreateUserWithEmailAndPasswordAsync(email, password, username);
-                result =  null;
+                result = null;
             }
             catch (FirebaseAuthHttpException ex)
             {
                 result =  ParseErrorMessageFromResponse(ex);
             }
-            string userId = UserAuthCredentials.User.Uid;
-            string path = $"users/{userId}";
-            var user = new
+            if (result == null)
             {
-                Email = email,
-                Username = username,
-                IsAdmin = false,
-                AccessLevel = 1,
-                PreferedAccessMethod = 1
-            };
-            if (result == null )
-            {
+                string userId = UserAuthCredentials.User.Uid;
+                string path = $"users/{userId}";
+                var user = new
+                {
+                    Username = username,
+                    AccessLevel = 1,
+                    PreferedAccessMethod = 1
+                };
+            
                 try
                 {
-                    await userDataClient.Child(path).PutAsync(user);
+                    await databaseClient.Child(path).PutAsync(user);
                     result = null;
                 }
                 catch (Exception ex)
@@ -104,5 +142,55 @@ namespace AccessControlMobileApp.Services
             return error;
         }
 
+        public async Task<string> SaveUserSettings(string username, int preferedAccessMethod)
+        {
+            string result;
+            string userId = UserAuthCredentials.User.Uid;
+            string path;
+            if (userData.IsAdmin)
+            {
+                path = $"admins/{userId}";
+            }
+            else
+            {
+                path = $"users/{userId}";
+            }
+            var updates = new Dictionary<string, object>
+            {
+                { "Username", username },
+                { "PreferedAccessMethod", preferedAccessMethod }  
+            };
+
+            try
+            {
+                await databaseClient.Child(path).PatchAsync(updates);
+                userData.PreferedAccessMethod = preferedAccessMethod;
+                userData.Username = username;
+                result = null;
+            }
+            catch (Exception ex)
+            {
+                result = ex.Message;
+            }
+
+            return result;
+        }
+
+        public async Task<string> SaveAccountSettings(string email, string oldPassword, string newPassword)
+        {
+            string result;
+            try
+            {
+                await userAuthClient.SignInWithEmailAndPasswordAsync(email, oldPassword);
+                await userAuthClient.User.ChangePasswordAsync(newPassword);
+                result = null;
+            }
+            catch (FirebaseAuthHttpException ex)
+            {
+                result = ParseErrorMessageFromResponse(ex);
+            }
+
+            return result;
+        }
     }
 }
