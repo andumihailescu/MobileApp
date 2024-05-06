@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Firebase.Database.Query;
 using Firebase.Auth;
 using Newtonsoft.Json.Linq;
+using System.Text.RegularExpressions;
 
 namespace AccessControlMobileApp.Services
 {
@@ -69,9 +70,12 @@ namespace AccessControlMobileApp.Services
                         UserData.AccessLevel = Convert.ToInt32(item.Object.ToString());
                         break;
                     case 1:
-                        UserData.PreferedAccessMethod = Convert.ToInt32(item.Object.ToString());
+                        UserData.Email = item.Object.ToString();
                         break;
                     case 2:
+                        UserData.PreferedAccessMethod = Convert.ToInt32(item.Object.ToString());
+                        break;
+                    case 3:
                         UserData.Username = item.Object.ToString();
                         break;
                 }
@@ -95,6 +99,13 @@ namespace AccessControlMobileApp.Services
         public async Task<string> RegisterUser(string email, string password, string username)
         {
             string result;
+
+            string passwordPattern = @"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^\da-zA-Z]).{8,}$";
+            if (!Regex.IsMatch(password, passwordPattern))
+            {
+                return "Password must have a minimum of 8 characters, at least one uppercase letter, one lowercase letter, one digit, and one special symbol.";
+            }
+
             try
             {
                 UserAuthCredentials = await userAuthClient.CreateUserWithEmailAndPasswordAsync(email, password, username);
@@ -111,6 +122,7 @@ namespace AccessControlMobileApp.Services
                 var user = new
                 {
                     Username = username,
+                    Email = email,
                     AccessLevel = 1,
                     PreferedAccessMethod = 1
                 };

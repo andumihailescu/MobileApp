@@ -2,7 +2,7 @@
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="AccessControlMobileApp.Views.RequestAccessPage"
-             xmlns:vm="clr-namespace:AccessControlMobileApp.ViewModels"
+             xmlns:vm="clr-namespace:AccessControlMobileApp.ViewModels" xmlns:behaviors="clr-namespace:AccessControlMobileApp.Services"
              Title="Request Access">
 
     <ContentPage.BindingContext>
@@ -28,8 +28,18 @@
                 TextColor="White" />
         <Button Margin="0,10,0,0" Text="Only admins"
                 IsVisible="{Binding HasAdminRights}"
-                Command="{Binding LogoutCommand}"
+                Command="{Binding GoToAdminsPageCommand}"
                 BackgroundColor="{StaticResource PrimaryColor}"
                 TextColor="White" />
+        <StackLayout IsVisible="{Binding BluetoothAccess}">
+            <Button Command="{Binding ScanButtonClicked}"
+                    Text="Scan"/>
+            <ListView ItemsSource="{Binding AvailableDevices}"
+                      ItemTapped="ListView_ItemTapped">
+            </ListView>
+        </StackLayout>
+        <ActivityIndicator IsVisible="{Binding IsLoading}"
+                           IsRunning="{Binding IsLoading}"
+                           Scale="0.3" />
     </StackLayout>
 </ContentPage>
