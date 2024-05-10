@@ -84,7 +84,8 @@ namespace AccessControlMobileApp.Services
                         username: childSnapshot.Object.Username,
                         isAdmin: childSnapshot.Object.IsAdmin,
                         accessLevel: childSnapshot.Object.AccessLevel,
-                        preferedAccessMethod: childSnapshot.Object.PreferedAccessMethod
+                        preferedAccessMethod: childSnapshot.Object.PreferedAccessMethod,
+                        firstTimeLogin: childSnapshot.Object.FirstTimeLogin
                     );
                     
                     usersData.Add(userData);
@@ -100,7 +101,8 @@ namespace AccessControlMobileApp.Services
                         username: childSnapshot.Object.Username,
                         isAdmin: childSnapshot.Object.IsAdmin,
                         accessLevel: childSnapshot.Object.AccessLevel,
-                        preferedAccessMethod: childSnapshot.Object.PreferedAccessMethod
+                        preferedAccessMethod: childSnapshot.Object.PreferedAccessMethod,
+                        firstTimeLogin: childSnapshot.Object.FirstTimeLogin
                     );
 
                     usersData.Add(userData);

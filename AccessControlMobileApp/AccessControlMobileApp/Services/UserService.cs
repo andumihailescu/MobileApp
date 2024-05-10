@@ -73,9 +73,12 @@ namespace AccessControlMobileApp.Services
                         UserData.Email = item.Object.ToString();
                         break;
                     case 2:
-                        UserData.PreferedAccessMethod = Convert.ToInt32(item.Object.ToString());
+                        UserData.FirstTimeLogin = Convert.ToBoolean(item.Object.ToString());
                         break;
                     case 3:
+                        UserData.PreferedAccessMethod = Convert.ToInt32(item.Object.ToString());
+                        break;
+                    case 4:
                         UserData.Username = item.Object.ToString();
                         break;
                 }
@@ -96,7 +99,7 @@ namespace AccessControlMobileApp.Services
             }
         }
 
-        public async Task<string> RegisterUser(string email, string password, string username)
+        public async Task<string> RegisterUser(string email, string password, string username, bool isAdmin, int accessLevel)
         {
             string result;
 
@@ -118,13 +121,24 @@ namespace AccessControlMobileApp.Services
             if (result == null)
             {
                 string userId = UserAuthCredentials.User.Uid;
-                string path = $"users/{userId}";
+                string path;
+
+                if (isAdmin)
+                {
+                    path = $"admins/{userId}";
+                }
+                else
+                {
+                    path = $"users/{userId}";
+                }
+
                 var user = new
                 {
                     Username = username,
                     Email = email,
-                    AccessLevel = 1,
-                    PreferedAccessMethod = 1
+                    AccessLevel = accessLevel,
+                    PreferedAccessMethod = 2,
+                    FirstTimeLogin = true
                 };
             
                 try
@@ -201,6 +215,36 @@ namespace AccessControlMobileApp.Services
             {
                 result = ParseErrorMessageFromResponse(ex);
             }
+            if ((result == null) && (UserData.FirstTimeLogin == true))
+            {
+
+            }
+
+            string userId = UserAuthCredentials.User.Uid;
+            string path;
+            if (userData.IsAdmin)
+            {
+                path = $"admins/{userId}";
+            }
+            else
+            {
+                path = $"users/{userId}";
+            }
+            var updates = new Dictionary<string, object>
+            {
+                { "FirstTimeLogin", !UserData.FirstTimeLogin }
+            };
+            try
+            {
+                await databaseClient.Child(path).PatchAsync(updates);
+                userData.FirstTimeLogin = !UserData.FirstTimeLogin;
+                result = null;
+            }
+            catch (Exception ex)
+            {
+                result = ex.Message;
+            }
+
 
             return result;
         }

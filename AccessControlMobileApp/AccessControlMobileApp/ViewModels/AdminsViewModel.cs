@@ -1,4 +1,5 @@
 ﻿using AccessControlMobileApp.Models;
+using AccessControlMobileApp.Views;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -9,7 +10,7 @@ using Xamarin.Forms;
 
 namespace AccessControlMobileApp.ViewModels
 {
-    public class LogsViewModel : BaseViewModel
+    public class AdminsViewModel : BaseViewModel
     {
         private ObservableCollection<Log> _logs;
         public ObservableCollection<Log> Logs
@@ -64,10 +65,13 @@ namespace AccessControlMobileApp.ViewModels
 
         public Command RequestAllUsersDataCommand { get; set; }
 
-        public LogsViewModel()
+        public Command GoToRegisterPageCommand { get; set; }
+
+        public AdminsViewModel()
         {
             RequestAllLogsCommand = new Command(async () => await OnRequestAllLogsClicked());
             RequestAllUsersDataCommand = new Command(async () => await OnRequestAllUsersDataClicked());
+            GoToRegisterPageCommand = new Command(async () => await OnGoToRegisterClicked());
             IsUserListVisible = true;
             IsLogsListVisible = false;
             OnRequestAllUsersDataClicked();
@@ -87,5 +91,9 @@ namespace AccessControlMobileApp.ViewModels
             IsUserListVisible = true;
         }
 
+        private async Task OnGoToRegisterClicked()
+        {
+            await Application.Current.MainPage.Navigation.PushModalAsync(new RegisterPage());
+        }
     }
 }

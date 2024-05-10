@@ -18,8 +18,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Update="Views\LogsPage.xaml.cs">
-      <DependentUpon>LogsPage.xaml</DependentUpon>
+    <Compile Update="Views\AdminsPage.xaml.cs">
+      <DependentUpon>AdminsPage.xaml</DependentUpon>
     </Compile>
     <Compile Update="Views\AccountSettingsPage.xaml.cs">
       <DependentUpon>AccountSettingsPage.xaml</DependentUpon>

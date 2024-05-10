@@ -11,9 +11,9 @@ using Xamarin.Forms.Xaml;
 namespace AccessControlMobileApp.Views
 {
     [XamlCompilation(XamlCompilationOptions.Compile)]
-    public partial class LogsPage : ContentPage
+    public partial class AdminsPage : ContentPage
     {
-        public LogsPage()
+        public AdminsPage()
         {
             InitializeComponent();
         }

@@ -63,7 +63,7 @@ namespace AccessControlMobileApp.ViewModels
             if (result == null)
             {
                 await Application.Current.MainPage.DisplayAlert("Seccess", "Password Changed", "OK");
-                Application.Current.MainPage = new RequestAccessPage();
+                await Application.Current.MainPage.Navigation.PopModalAsync();
             }
             else
             {

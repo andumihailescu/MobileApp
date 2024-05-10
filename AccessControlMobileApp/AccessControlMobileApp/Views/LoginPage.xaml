@@ -38,12 +38,6 @@
                 Text="Login" 
                 Command="{Binding LoginCommand}"
                 BackgroundColor="{StaticResource PrimaryColor}"/>
-            <Button 
-                VerticalOptions="Center" 
-                Text="Go To Registration"
-                Command="{Binding GoToRegisterPageCommand}"
-                BackgroundColor="{StaticResource PrimaryColor}"/>
-            
         </StackLayout>
     </ContentPage.Content>
 </ContentPage>

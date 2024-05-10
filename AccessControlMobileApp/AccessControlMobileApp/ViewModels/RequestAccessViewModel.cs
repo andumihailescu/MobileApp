@@ -103,7 +103,7 @@ namespace AccessControlMobileApp.ViewModels
             GoToUserSettingsCommand = new Command(async () => await GoToUserSettingsClicked());
             GoToAccountSettingsCommand = new Command(GoToAccountSettingsClicked);
             LogoutCommand = new Command(OnLogoutClicked);
-            GoToAdminsPageCommand = new Command(GoToAdminsPage);
+            GoToAdminsPageCommand = new Command(async () => await GoToAdminsPage());
             ScanButtonClicked = new Command(async () => await OnScanButtonClicked());
             SelectBluetoothDevice = new Command(async (object device) => await OnSelectBluetoothDevice(device));
 
@@ -150,9 +150,9 @@ namespace AccessControlMobileApp.ViewModels
             Application.Current.MainPage = new LoginPage();
         }
 
-        public void GoToAdminsPage()
+        public async Task GoToAdminsPage()
         {
-            Application.Current.MainPage =  new LogsPage();
+            await Application.Current.MainPage.Navigation.PushModalAsync(new AdminsPage());
         }
 
         private async Task<bool> PermissionsGrantedAsync()
