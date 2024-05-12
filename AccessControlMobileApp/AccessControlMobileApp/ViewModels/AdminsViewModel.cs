@@ -67,11 +67,17 @@ namespace AccessControlMobileApp.ViewModels
 
         public Command GoToRegisterPageCommand { get; set; }
 
+        public Command GoToUserDetailsCommand { get; set; }
+
+        public Command GoToLogDetailsCommand { get; set; }
+
         public AdminsViewModel()
         {
             RequestAllLogsCommand = new Command(async () => await OnRequestAllLogsClicked());
             RequestAllUsersDataCommand = new Command(async () => await OnRequestAllUsersDataClicked());
             GoToRegisterPageCommand = new Command(async () => await OnGoToRegisterClicked());
+            GoToUserDetailsCommand = new Command(async (object sender) => await GoToUserDetails(sender));
+            GoToLogDetailsCommand = new Command(async (object sender) => await GoToLogDetails(sender));
             IsUserListVisible = true;
             IsLogsListVisible = false;
             OnRequestAllUsersDataClicked();
@@ -94,6 +100,16 @@ namespace AccessControlMobileApp.ViewModels
         private async Task OnGoToRegisterClicked()
         {
             await Application.Current.MainPage.Navigation.PushModalAsync(new RegisterPage());
+        }
+
+        public async Task GoToUserDetails(object sender)
+        {
+            await Application.Current.MainPage.Navigation.PushModalAsync(new UserDetailsPage(sender));
+        }
+
+        public async Task GoToLogDetails(object sender)
+        {
+            await Application.Current.MainPage.Navigation.PushModalAsync(new LogDetailsPage(sender));
         }
     }
 }

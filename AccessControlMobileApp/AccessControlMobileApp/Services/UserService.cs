@@ -8,6 +8,10 @@ using Firebase.Database.Query;
 using Firebase.Auth;
 using Newtonsoft.Json.Linq;
 using System.Text.RegularExpressions;
+using System.Net.Http;
+using FirebaseAdmin.Auth;
+using System.Security.Cryptography;
+using Xamarin.Essentials;
 
 namespace AccessControlMobileApp.Services
 {
@@ -20,6 +24,7 @@ namespace AccessControlMobileApp.Services
         public UserData UserData { get => userData; set => userData = value; }
 
         private UserData userData;
+
         public UserService()
         {
             UserData = new UserData();

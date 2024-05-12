@@ -82,7 +82,7 @@ namespace AccessControlMobileApp.Services
                         userId: childSnapshot.Key,
                         email: childSnapshot.Object.Email,
                         username: childSnapshot.Object.Username,
-                        isAdmin: childSnapshot.Object.IsAdmin,
+                        isAdmin: true,
                         accessLevel: childSnapshot.Object.AccessLevel,
                         preferedAccessMethod: childSnapshot.Object.PreferedAccessMethod,
                         firstTimeLogin: childSnapshot.Object.FirstTimeLogin
@@ -99,7 +99,7 @@ namespace AccessControlMobileApp.Services
                         userId: childSnapshot.Key,
                         email: childSnapshot.Object.Email,
                         username: childSnapshot.Object.Username,
-                        isAdmin: childSnapshot.Object.IsAdmin,
+                        isAdmin: false,
                         accessLevel: childSnapshot.Object.AccessLevel,
                         preferedAccessMethod: childSnapshot.Object.PreferedAccessMethod,
                         firstTimeLogin: childSnapshot.Object.FirstTimeLogin

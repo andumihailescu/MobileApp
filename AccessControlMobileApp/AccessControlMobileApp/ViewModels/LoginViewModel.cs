@@ -45,6 +45,8 @@ namespace AccessControlMobileApp.ViewModels
         public LoginViewModel()
         {
             LoginCommand = new Command(async () => await OnLoginClicked());
+            Email = "andu33mp@gmail.com";
+            Password = "123456";
         }
 
         private async Task OnLoginClicked()

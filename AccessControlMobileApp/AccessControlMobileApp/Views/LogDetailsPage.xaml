@@ -1,0 +1,38 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="AccessControlMobileApp.Views.LogDetailsPage">
+    <ContentPage.Content>
+        <StackLayout Orientation="Vertical" Padding="30,24,30,24" Spacing="10">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+
+                <Label Text="User Id" Grid.Row="0" Grid.Column="0" />
+                <Label Text="Date" Grid.Row="1" Grid.Column="0" />
+                <Label Text="Is Admin" Grid.Row="2" Grid.Column="0" />
+                <Label Text="Access Method" Grid.Row="3" Grid.Column="0" />
+                <Label Text="Request Status" Grid.Row="4" Grid.Column="0" />
+                <Label Text="Gate Id" Grid.Row="5" Grid.Column="0" />
+
+                <Label Text="{Binding UserId}" Grid.Row="0" Grid.Column="1" />
+                <Label Text="{Binding Date}" Grid.Row="1" Grid.Column="1" />
+                <Label Text="{Binding IsAdmin}" Grid.Row="2" Grid.Column="1" />
+                <Label Text="{Binding AccessMethod}" Grid.Row="3" Grid.Column="1" />
+                <Label Text="{Binding RequestStatus}" Grid.Row="4" Grid.Column="1" />
+                <Label Text="{Binding GateId}" Grid.Row="5" Grid.Column="1" />
+            </Grid>
+        </StackLayout>
+    </ContentPage.Content>
+</ContentPage>

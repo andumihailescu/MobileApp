@@ -20,6 +20,11 @@
             <ScrollView Grid.Row="0">
                 <StackLayout>
                     <ListView ItemsSource="{Binding UsersData}" IsVisible="{Binding IsUserListVisible}">
+                        <ListView.Behaviors>
+                            <vm:EventToCommandBehavior
+                                EventName="ItemSelected"
+                                Command="{Binding GoToUserDetailsCommand}" />
+                        </ListView.Behaviors>
                         <ListView.ItemTemplate>
                             <DataTemplate>
                                 <TextCell Text="{Binding UserId}" Detail="{Binding Email}" />
@@ -29,6 +34,11 @@
                     </ListView>
 
                     <ListView ItemsSource="{Binding Logs}" IsVisible="{Binding IsLogsListVisible}">
+                        <ListView.Behaviors>
+                            <vm:EventToCommandBehavior
+                                EventName="ItemSelected"
+                                Command="{Binding GoToLogDetailsCommand}" />
+                        </ListView.Behaviors>
                         <ListView.ItemTemplate>
                             <DataTemplate>
                                 <TextCell Text="{Binding UserId}" Detail="{Binding Date}" />
