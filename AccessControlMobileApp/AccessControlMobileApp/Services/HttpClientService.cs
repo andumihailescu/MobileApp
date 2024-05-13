@@ -12,15 +12,14 @@ namespace AccessControlMobileApp.Services
 
         public HttpClientService()
         {
-        
+
         }
         public async Task<bool> SendMessage(string message)
         {
             try
             { 
-                var uri = new Uri("http://192.168.4.1/");
-                var content = new StringContent(message + "\r\n\r\n", Encoding.UTF8, "text/plain");
-                //HttpResponseMessage response = await client.GetAsync(uri);
+                var uri = new Uri("http://192.168.0.105/");
+                var content = new StringContent(message + "\r\n", Encoding.UTF8, "text/plain");
                 HttpResponseMessage response = await client.PostAsync(uri, content);
                 if (response.IsSuccessStatusCode)
                 {
@@ -33,7 +32,6 @@ namespace AccessControlMobileApp.Services
             }
             catch (Exception ex)
             {
-                // Handle exception
                 Console.WriteLine($"Error: {ex.Message}");
                 return false;
             }

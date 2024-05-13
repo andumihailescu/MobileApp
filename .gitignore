@@ -1,0 +1,8 @@
+AccessControlSystem/libraries/*
+.vs/*
+AccessControlMobileApp/AccessControlMobileApp/bin/*
+AccessControlMobileApp/AccessControlMobileApp/obj/*
+AccessControlMobileApp/AccessControlMobileApp.Android/.vs/*
+AccessControlMobileApp/AccessControlMobileApp.Android/bin/*
+AccessControlMobileApp/AccessControlMobileApp.Android/obj/*
+AccessControlMobileApp/AccessControlMobileApp.iOS/*
