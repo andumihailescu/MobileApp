@@ -5,24 +5,29 @@
 #include <BLEUtils.h>
 #include <BLEServer.h>
 #include <BLE2902.h>
-// See the following for generating UUIDs:
-// https://www.uuidgenerator.net/
 #include <WiFi.h>
 #include <WiFiClientSecure.h>
 #include <ArduinoJson.h>
+#include <Firebase_ESP_Client.h>
+#include <WiFiUdp.h>
+#include <NTPClient.h>
+#include <ESPmDNS.h>
+
+#include "addons/TokenHelper.h"
+#include "addons/RTDBHelper.h"
 
 #define SDA_PIN 21
 #define SCL_PIN 22
 #define SERVO_MOTOR_ANGLE 50
 #define REQUIRED_ACCESS_LEVEL 2
+#define GATE_ID "IM414"
 #define SERVICE_UUID        "931058ce-581b-4344-996e-aef3da80fc1d"
 #define CHARACTERISTIC_UUID "7b411f1f-7e30-4fad-98b4-a746544d19cc"
 
-#define WIFI_SSID "TP-Link_FA18"
-#define WIFI_PASSWORD "Petronel200!"
-IPAddress staticIP(192, 168, 0, 105); // Your desired static IP address
-IPAddress gateway(192, 168, 0, 1);    // Your gateway IP address
-IPAddress subnet(255, 255, 255, 0);   // Your subnet mask
+#define WIFI_SSID "MyNetwork"
+#define WIFI_PASSWORD "Passw0rd!"
+#define API_KEY "AIzaSyAHl-cJy8zniA0u7yQSu8hZ7avsToaAgEA"
+#define DATABASE_URL "https://accesscontrolmobileapp-default-rtdb.europe-west1.firebasedatabase.app/" 
 
 Servo myServo;
 //A12, GND A19 & 3v3 J19
@@ -36,7 +41,7 @@ uint8_t SELECT_APDU[] = {
   0x04, /* P1  */
   0x00, /* P2  */
   0x05, /* Length of AID  */
-  0xF2, 0x22, 0x22, 0x22, 0x22 /* AID  */
+  0xF5, 0x22, 0x22, 0x22, 0x22 /* AID  */
 };
 
 BLEServer* pServer = NULL;
@@ -50,16 +55,26 @@ WiFiServer server(80);
 String receivedMessage = "";
 bool requestReceived = false;
 
-String firebaseUrl = "https://accesscontrolmobileapp-default-rtdb.europe-west1.firebasedatabase.app/";
-IPAddress firebaseIp(34, 107, 226, 223);
 WiFiClientSecure client;
+
+FirebaseData fbdo;
+FirebaseAuth auth;
+FirebaseConfig config;
+bool signupOK = false;
+
+WiFiUDP ntpUDP;
+NTPClient timeClient(ntpUDP, "pool.ntp.org", 3600, 60000); // NTP server, time offset in seconds, update interval in milliseconds
+String dateAndTime;
+int accessLevel;
+bool isAdmin;
+bool isApproved;
+String accessMethod;
 
 void configureNfc() {
   nfc.begin();
   bool nfcConfigResult = nfc.SAMConfig();
   if (nfcConfigResult == false) {
     Serial.println("NFC module configuration failure...");
-    //return;
   }
   Serial.println("Waiting for an NFC card...");
 }
@@ -100,7 +115,7 @@ void configureBle() {
 
 void configureAp() {
   
-  WiFi.config(staticIP, gateway, subnet);
+  //WiFi.config(staticIP, gateway, subnet);
   WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
   Serial.println("\nConnecting");
 
@@ -112,8 +127,28 @@ void configureAp() {
   Serial.print("Local ESP32 IP: ");
   Serial.println(WiFi.localIP());
 
+  if (!MDNS.begin(GATE_ID)) {
+    Serial.println("Error setting up MDNS responder!");
+  }
+  Serial.println("mDNS responder started");
+
   server.begin();
-  client.setInsecure();
+
+  config.api_key = API_KEY;
+  config.database_url = DATABASE_URL;
+
+  if (Firebase.signUp(&config, &auth, "", "")) {
+    signupOK = true;
+  }
+  else {
+    Serial.printf("%s\n", config.signer.signupError.message.c_str());
+  }
+
+  config.token_status_callback = tokenStatusCallback;
+
+  Firebase.begin(&config, &auth);
+  Firebase.reconnectWiFi(true);
+
 }
 
 void setup(void) {
@@ -122,27 +157,40 @@ void setup(void) {
   configureNfc();
   configureBle();
   configureAp();
+  timeClient.begin();
 }
 
 void loop(void) {
 
+  //MDNS.update();
   if (ReadHostCardEmulation()) {
     requestReceived = true;
+    accessMethod = "NFC";
   } else if (ReadBluetoothMessages()) {
     requestReceived = true;
+    accessMethod = "Bluetooth";
   } else if (ReadWiFiMessage()) {
     requestReceived = true;
+    accessMethod = "Wi-Fi";
   }
 
   if (requestReceived) {
 
-    bool requestApproved = resolveRequest(receivedMessage);
-    if (requestApproved) {
+    int requestStatus = VerifyUser(receivedMessage);
+    if (requestStatus == 1) {
+      isApproved = true;
+      Serial.println("Access approved");
       myServo.write(SERVO_MOTOR_ANGLE);
       delay(10000);
       myServo.write(0);
-    } else {
+      SaveLogsInsideDatabase(receivedMessage);
+    } else if (requestStatus == 0) {
+      isApproved = false;
+      SaveLogsInsideDatabase(receivedMessage);
       Serial.println("Access denied");
+    }
+    else {
+      Serial.println("User doesn't exist");
     }
     requestReceived = false;
     receivedMessage.clear();
@@ -167,7 +215,7 @@ bool ReadHostCardEmulation() {
         receivedMessage.concat((char)response[i]);
       }
       Serial.println(receivedMessage);
-      delay(10000);
+      delay(1000);
     } else {
       Serial.println("Not sent");
     }
@@ -270,85 +318,84 @@ bool ReadWiFiMessage() {
   return wifiMessageReceived;
 }
 
-bool resolveRequest(String userId) {
+int VerifyUser(String userId) {
   
-  String path;
-  int hasRights;
-  if (!client.connect(firebaseIp, 443)) {
-    Serial.println("Connection failed!");
-    hasRights = -1;
+  int okResult = -1;
+  bool userExists = false;
+  String nodePath = "/admins/" + userId;
+  if (Firebase.RTDB.getJSON(&fbdo, nodePath.c_str())) {
+    userExists = true;
+  } else {
+      nodePath = "/users/" + userId;
+      if (Firebase.RTDB.getJSON(&fbdo, nodePath.c_str())) {
+        userExists = true;
+      }
+      else {
+        userExists = false;
+        Serial.println(fbdo.errorReason());
+      }
   }
-  else {
-    path = firebaseUrl + "users/" + userId + ".json";
-    hasRights = verifyUserAccessRights(path);
-    if (hasRights == -1) {
-      path = firebaseUrl + "admins/" + userId + ".json";
-      hasRights = verifyUserAccessRights(path);
+  if (userExists) {
+    if (fbdo.dataType() == "json") {
+      FirebaseJson& json = fbdo.jsonObject();
+      String jsonString;
+      json.toString(jsonString, true);
+      Serial.println("JSON data:");
+      Serial.println(jsonString);
+      GetUserData(jsonString);
+      if (accessLevel <= REQUIRED_ACCESS_LEVEL) {
+        okResult = 1;
+      }
+      else {
+        okResult = 0;
+      }
     }
   }
-  if (hasRights < 1) {
-    return false;
-  }
-  else {
-    return true;
-  }
+  return okResult;
 }
 
-int verifyUserAccessRights(String path) {
-
-  int result = -1;
-
-  Serial.println("Connected to server!");
-
-  client.println("GET " + path + " HTTP/1.0");
-  client.println("Host: accesscontrolmobileapp-default-rtdb.europe-west1.firebasedatabase.app");
-  client.println("Connection: close");
-  client.println();
-
-  String msg = "";
-  while (client.connected()) {
-    String line = client.readStringUntil('\n');
-    if (line == "\r") {
-      Serial.println("headers received");
-      break;
-    }
-    msg += line;
-  }
-  String jsn = "";
-  bool isParsing = false;
-  while (client.available()) {
-    char c = client.read();
-    Serial.print(c);
-    if (c == '{') {
-      isParsing = true;
-    }
-    if (isParsing) {
-      jsn += c;
-    }
-    if (c == '}') {
-      isParsing = false;
-    }
-  }
-  Serial.println(jsn);
-  if (!jsn.isEmpty()) {
+void GetUserData(String json) {
+  if (!json.isEmpty()) {
     DynamicJsonDocument doc(1024);
-    DeserializationError error = deserializeJson(doc, jsn);
+    DeserializationError error = deserializeJson(doc, json);
     if (error) {
       Serial.print("deserializeJson() failed: ");
       Serial.println(error.c_str());
-      return false;
     }
-    int accessLevel = doc["AccessLevel"];
-    Serial.print("Access Level: ");
-    Serial.println(accessLevel);
-    if (accessLevel <= REQUIRED_ACCESS_LEVEL) {
-      result = 1;
-    }
-    else {
-      result = 0;
-    }
+    accessLevel = doc["AccessLevel"];
+    isAdmin = doc["IsAdmin"];
   }
-  client.stop();
+}
 
-  return result;
+void SaveLogsInsideDatabase(String userId) {
+
+  String dateAndTime = getDateAndTimeString();
+  String nodePath = "/z_logs/" + dateAndTime + userId + "/UserId";
+  Firebase.RTDB.setString(&fbdo, nodePath.c_str(), userId.c_str());
+  nodePath = "/z_logs/" + dateAndTime + userId + "/IsAdmin";
+  Firebase.RTDB.setString(&fbdo, nodePath.c_str(), isAdmin);
+  nodePath = "/z_logs/" + dateAndTime + userId + "/AccessMethod";
+  Firebase.RTDB.setString(&fbdo, nodePath.c_str(), accessMethod.c_str());
+  nodePath = "/z_logs/" + dateAndTime + userId + "/GateId";
+  Firebase.RTDB.setString(&fbdo, nodePath.c_str(), GATE_ID);
+  nodePath = "/z_logs/" + dateAndTime + userId + "/IsApproved";
+  Firebase.RTDB.setString(&fbdo, nodePath.c_str(), isApproved);
+  nodePath = "/z_logs/" + dateAndTime + userId + "/DateAndTime";
+  Firebase.RTDB.setString(&fbdo, nodePath.c_str(), dateAndTime.c_str());
+}
+
+String getDateAndTimeString() {
+  String dateAndTime;
+  timeClient.update();
+  unsigned long epochTime = timeClient.getEpochTime();
+  struct tm *ptm = gmtime ((time_t *)&epochTime);
+  int year = (ptm->tm_year + 1900) % 100;
+  int month = ptm->tm_mon + 1;
+  int day = ptm->tm_mday;
+  int hour = ptm->tm_hour;
+  int minute = ptm->tm_min;
+  int second = ptm->tm_sec;
+  char buffer[13];
+  snprintf(buffer, sizeof(buffer), "%02d%02d%02d%02d%02d%02d", year, month, day, hour, minute, second);
+  return String(buffer);
 }

@@ -118,17 +118,14 @@ namespace AccessControlMobileApp.ViewModels
             {
                 MessagingCenter.Send<object, string>(this, "Userid", userService.UserAuthCredentials.User.Uid);
                 MessagingCenter.Send<object, bool>(this, "IsActivated", true);
-                await App.LogsService.GenerateLogs();
             }
             if (PreferedAccessMethod == 1)
             {
                 await App.BluetoothService.SendMessage(userService.UserAuthCredentials.User.Uid);
-                await App.LogsService.GenerateLogs();
             }
             if (PreferedAccessMethod == 2)
             {
                 await App.HttpClientService.SendMessage(userService.UserAuthCredentials.User.Uid);
-                await App.LogsService.GenerateLogs();
             }
         }
 
