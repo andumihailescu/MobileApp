@@ -12,6 +12,7 @@
 #include <WiFiUdp.h>
 #include <NTPClient.h>
 #include <ESPmDNS.h>
+#include <U8g2lib.h>
 
 #include "addons/TokenHelper.h"
 #include "addons/RTDBHelper.h"
@@ -32,7 +33,7 @@
 Servo myServo;
 //A12, GND A19 & 3v3 J19
 int servoPin = 19;
-
+U8G2_SSD1306_128X64_NONAME_1_4W_SW_SPI u8g2(U8G2_R0, /* clock=*/ 18, /* data=*/ 23, /* cs=*/ 5, /* dc=*/ 17, /* reset=*/ 16);
 Adafruit_PN532 nfc(SDA_PIN, SCL_PIN);
 
 uint8_t SELECT_APDU[] = {
@@ -68,6 +69,18 @@ int accessLevel;
 bool isAdmin;
 bool isApproved;
 String accessMethod;
+
+void configureDisplay() {
+
+  pinMode(5, OUTPUT);
+  pinMode(17, OUTPUT);
+  digitalWrite(5, 0);
+  digitalWrite(17, 0);	
+
+  u8g2.begin();
+
+  ClearDisplay();
+}
 
 void configureNfc() {
   nfc.begin();
@@ -153,6 +166,7 @@ void configureAp() {
 void setup(void) {
   Serial.begin(115200);
   myServo.attach(servoPin);
+  configureDisplay();
   configureNfc();
   configureBle();
   configureAp();
@@ -180,13 +194,19 @@ void loop(void) {
       isApproved = true;
       Serial.println("Access approved");
       myServo.write(SERVO_MOTOR_ANGLE);
-      delay(10000);
+      DisplayRequestStatus(isApproved);
+      delay(3000);
+      ClearDisplay();
+      delay(7000);
       myServo.write(0);
       SaveLogsInsideDatabase(receivedMessage);
     } else if (requestStatus == 0) {
       isApproved = false;
-      SaveLogsInsideDatabase(receivedMessage);
       Serial.println("Access denied");
+      DisplayRequestStatus(isApproved);
+      delay(3000);
+      ClearDisplay();
+      SaveLogsInsideDatabase(receivedMessage);
     }
     else {
       Serial.println("User doesn't exist");
@@ -402,4 +422,31 @@ void GetDateAndTimeString(String &rawDate, String &formattedDate) {
   snprintf(formattedBuffer, sizeof(formattedBuffer), "%02d:%02d:%02d %02d/%02d/%02d", hour, minute, second, day, month, year % 100);
   rawDate = (String)buffer;
   formattedDate =(String)formattedBuffer;
+}
+
+void ClearDisplay() {
+  u8g2.firstPage();
+  do {
+    u8g2.drawFrame(2, 0, 126, 64);
+  } while (u8g2.nextPage());
+}
+
+void DisplayRequestStatus(bool status) {
+  if (status)
+  {
+    u8g2.firstPage();
+    do {
+      u8g2.setFont(u8g2_font_ncenB10_tr);
+      u8g2.drawStr(2, 35, "Access approved");
+      u8g2.drawFrame(2, 0, 126, 64);
+    } while (u8g2.nextPage());
+  }
+  else {
+    u8g2.firstPage();
+    do {
+      u8g2.setFont(u8g2_font_ncenB10_tr);
+      u8g2.drawStr(12, 35, "Access denied");
+      u8g2.drawFrame(2, 0, 126, 64);
+    } while (u8g2.nextPage());
+  }
 }
