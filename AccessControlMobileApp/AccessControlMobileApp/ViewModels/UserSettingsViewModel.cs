@@ -1,4 +1,5 @@
-﻿using System;
+﻿using AccessControlMobileApp.Views;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
@@ -93,7 +94,7 @@ namespace AccessControlMobileApp.ViewModels
             if (result == null)
             {
                 await Application.Current.MainPage.DisplayAlert("Seccess", "Settings Changed", "OK");
-                await Application.Current.MainPage.Navigation.PopModalAsync();
+                Application.Current.MainPage = new RequestAccessPage();
             }
             else
             {

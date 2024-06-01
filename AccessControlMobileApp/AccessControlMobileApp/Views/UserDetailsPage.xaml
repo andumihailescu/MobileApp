@@ -1,0 +1,60 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:AccessControlMobileApp.Views"
+             x:Class="AccessControlMobileApp.Views.UserDetailsPage">
+
+
+    <ContentPage.Content>
+        <StackLayout Orientation="Vertical" Padding="30,24,30,24" Spacing="10">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+
+                <Label Text="Username" Grid.Row="0" Grid.Column="0" />
+                <Label Text="Email" Grid.Row="1" Grid.Column="0" />
+                <Label Text="Is Admin" Grid.Row="2" Grid.Column="0" />
+                <Label Text="Access Level" Grid.Row="3" Grid.Column="0" />
+                <Label Text="Access Method" Grid.Row="4" Grid.Column="0" />
+
+                <Label Text="{Binding Username}" IsVisible="{Binding IsInDisplayMode}" Grid.Row="0" Grid.Column="1" />
+                <Label Text="{Binding Email}" IsVisible="{Binding IsInDisplayMode}" Grid.Row="1" Grid.Column="1" />
+                <Label Text="{Binding IsAdmin}" IsVisible="{Binding IsInDisplayMode}" Grid.Row="2" Grid.Column="1" />
+                <Label Text="{Binding AccessLevel}" IsVisible="{Binding IsInDisplayMode}" Grid.Row="3" Grid.Column="1" />
+                <Label Text="{Binding PreferedAccessMethod}" Grid.Row="4" Grid.Column="1" />
+
+                <Entry
+                    Text="{Binding Username, Mode=TwoWay}" IsVisible="{Binding IsInEditingMode}" Grid.Row="0" Grid.Column="1"
+                    Placeholder="Username"
+                    TextTransform="Lowercase"
+                    PlaceholderColor="Gray"
+                    TextColor="White"/>
+                <Entry
+                    Text="{Binding Email, Mode=TwoWay}" IsVisible="{Binding IsInEditingMode}" Grid.Row="1" Grid.Column="1"
+                    Placeholder="Email"
+                    TextTransform="Lowercase"
+                    IsSpellCheckEnabled="False"
+                    IsTextPredictionEnabled="False"
+                    PlaceholderColor="Gray"
+                    TextColor="White"/>
+                <CheckBox IsChecked="{Binding IsAdmin}" IsVisible="{Binding IsInEditingMode}" Grid.Row="2" Grid.Column="1"/>
+                <Picker Title="Select an Item" IsVisible="{Binding IsInEditingMode}" Grid.Row="3" Grid.Column="1"
+                        ItemsSource="{Binding Items}"
+                        SelectedItem="{Binding SelectedItem}"
+                        SelectedIndex="{Binding SelectedIndex}" />
+            </Grid>
+            <Button Text="{Binding BtnText}" Command="{Binding OnManageUserCommand}"/>
+            <Button Text="Delete User Account" Command="{Binding OnDeleteUserAccountCommand}"/>
+        </StackLayout>
+    </ContentPage.Content>
+</ContentPage>

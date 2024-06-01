@@ -41,12 +41,10 @@ namespace AccessControlMobileApp.ViewModels
         }
 
         public Command LoginCommand { get; set; }
-        public Command GoToRegisterPageCommand { get; set; }
 
         public LoginViewModel()
         {
             LoginCommand = new Command(async () => await OnLoginClicked());
-            GoToRegisterPageCommand = new Command(async () => await OnGoToRegisterClicked());
         }
 
         private async Task OnLoginClicked()
@@ -56,17 +54,20 @@ namespace AccessControlMobileApp.ViewModels
             if (result == null)
             {
                 await App.UserService.RequestUserData();
-                Application.Current.MainPage = new RequestAccessPage();
+                if (userService.UserData.FirstTimeLogin)
+                {
+                    Password = "";
+                    await Application.Current.MainPage.Navigation.PushModalAsync(new AccountSettingsPage());
+                }
+                else
+                {
+                    Application.Current.MainPage = new RequestAccessPage();
+                }
             }
             else
             {
                 await Application.Current.MainPage.DisplayAlert("Error", result, "OK");
             }
-        }
-
-        private async Task OnGoToRegisterClicked()
-        {
-            await Application.Current.MainPage.Navigation.PushModalAsync(new RegisterPage());
         }
     }
 }

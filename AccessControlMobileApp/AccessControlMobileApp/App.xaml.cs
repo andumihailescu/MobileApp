@@ -10,6 +10,9 @@ namespace AccessControlMobileApp
     {
         public static UserService UserService { get; private set; }
         public static LogsService LogsService { get; private set; }
+        public static BluetoothService BluetoothService { get; private set; }
+        public static HttpClientService HttpClientService { get; private set; }
+        public static AdminService AdminService { get; private set; }
 
         public App()
         {
@@ -21,6 +24,9 @@ namespace AccessControlMobileApp
         {
             UserService = new UserService();
             LogsService = new LogsService();
+            BluetoothService = new BluetoothService();
+            HttpClientService = new HttpClientService();
+            AdminService = new AdminService();
         }
 
         protected override void OnSleep()

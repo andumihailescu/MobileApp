@@ -49,17 +49,58 @@ namespace AccessControlMobileApp.ViewModels
                 }
             }
         }
+        private bool _isAdmin;
+        public bool IsAdmin
+        {
+            get { return _isAdmin; }
+            set
+            {
+                if (_isAdmin != value)
+                {
+                    _isAdmin = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
+        private IList<string> items;
+        public IList<string> Items 
+        {
+            get { return items; }
+        }
+
+        private object selectedItem;
+        public object SelectedItem { get; set; }
+        private int selectedIndex;
+        public int SelectedIndex {
+            get { return selectedIndex; }
+            set
+            {
+                if (selectedIndex != value)
+                {
+                    selectedIndex = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
 
         public Command RegisterCommand { get; set; }
         public RegisterViewModel()
         {
             RegisterCommand = new Command(async () => await OnRegisterClicked());
+            items = new List<string>
+            {
+                "0",
+                "1",
+                "2",
+                "3"
+            };
         }
 
         private async Task OnRegisterClicked()
         {
             var userService = App.UserService;
-            var result = await userService.RegisterUser(Email, Password, Username);
+            var result = await userService.RegisterUser(Email, Password, Username, IsAdmin, SelectedIndex);
             if (result == null)
             {
                 await Application.Current.MainPage.DisplayAlert("Seccess", "User Registered", "OK");

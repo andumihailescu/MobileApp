@@ -88,15 +88,20 @@ namespace AccessControlMobileApp.Droid
                 if (isActivated)
                 {
                     byte[] messageBytes = Encoding.UTF8.GetBytes(userId);
+                    isActivated = false;
+                    userId = null;
                     return ConcatArrays(messageBytes, SELECT_OK_SW);
                 }
                 else
                 {
+                    userId = null;
                     return UNKNOWN_CMD_SW;
                 }
             }
             else
-            {
+            {   
+                isActivated = false;
+                userId = null;
                 return UNKNOWN_CMD_SW;
             }
         }

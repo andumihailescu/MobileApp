@@ -7,6 +7,11 @@ using System.Threading.Tasks;
 using Firebase.Database.Query;
 using Firebase.Auth;
 using Newtonsoft.Json.Linq;
+using System.Text.RegularExpressions;
+using System.Net.Http;
+using FirebaseAdmin.Auth;
+using System.Security.Cryptography;
+using Xamarin.Essentials;
 
 namespace AccessControlMobileApp.Services
 {
@@ -19,6 +24,7 @@ namespace AccessControlMobileApp.Services
         public UserData UserData { get => userData; set => userData = value; }
 
         private UserData userData;
+
         public UserService()
         {
             UserData = new UserData();
@@ -69,9 +75,15 @@ namespace AccessControlMobileApp.Services
                         UserData.AccessLevel = Convert.ToInt32(item.Object.ToString());
                         break;
                     case 1:
-                        UserData.PreferedAccessMethod = Convert.ToInt32(item.Object.ToString());
+                        UserData.Email = item.Object.ToString();
                         break;
                     case 2:
+                        UserData.FirstTimeLogin = Convert.ToBoolean(item.Object.ToString());
+                        break;
+                    case 3:
+                        UserData.PreferedAccessMethod = Convert.ToInt32(item.Object.ToString());
+                        break;
+                    case 4:
                         UserData.Username = item.Object.ToString();
                         break;
                 }
@@ -92,9 +104,16 @@ namespace AccessControlMobileApp.Services
             }
         }
 
-        public async Task<string> RegisterUser(string email, string password, string username)
+        public async Task<string> RegisterUser(string email, string password, string username, bool isAdmin, int accessLevel)
         {
             string result;
+
+            string passwordPattern = @"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^\da-zA-Z]).{8,}$";
+            if (!Regex.IsMatch(password, passwordPattern))
+            {
+                return "Password must have a minimum of 8 characters, at least one uppercase letter, one lowercase letter, one digit, and one special symbol.";
+            }
+
             try
             {
                 UserAuthCredentials = await userAuthClient.CreateUserWithEmailAndPasswordAsync(email, password, username);
@@ -107,12 +126,24 @@ namespace AccessControlMobileApp.Services
             if (result == null)
             {
                 string userId = UserAuthCredentials.User.Uid;
-                string path = $"users/{userId}";
+                string path;
+
+                if (isAdmin)
+                {
+                    path = $"admins/{userId}";
+                }
+                else
+                {
+                    path = $"users/{userId}";
+                }
+
                 var user = new
                 {
                     Username = username,
-                    AccessLevel = 1,
-                    PreferedAccessMethod = 1
+                    Email = email,
+                    AccessLevel = accessLevel,
+                    PreferedAccessMethod = 2,
+                    FirstTimeLogin = true
                 };
             
                 try
@@ -189,6 +220,36 @@ namespace AccessControlMobileApp.Services
             {
                 result = ParseErrorMessageFromResponse(ex);
             }
+            if ((result == null) && (UserData.FirstTimeLogin == true))
+            {
+
+            }
+
+            string userId = UserAuthCredentials.User.Uid;
+            string path;
+            if (userData.IsAdmin)
+            {
+                path = $"admins/{userId}";
+            }
+            else
+            {
+                path = $"users/{userId}";
+            }
+            var updates = new Dictionary<string, object>
+            {
+                { "FirstTimeLogin", !UserData.FirstTimeLogin }
+            };
+            try
+            {
+                await databaseClient.Child(path).PatchAsync(updates);
+                userData.FirstTimeLogin = !UserData.FirstTimeLogin;
+                result = null;
+            }
+            catch (Exception ex)
+            {
+                result = ex.Message;
+            }
+
 
             return result;
         }

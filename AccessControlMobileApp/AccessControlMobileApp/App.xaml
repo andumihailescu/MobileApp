@@ -7,16 +7,16 @@
     -->
     <Application.Resources>
         <ResourceDictionary>
-            <Color x:Key="PrimaryColor">#228b22</Color>
-            <Color x:Key="SecondaryColor">#50c878</Color>
-            <Color x:Key="BackgroundColor">#fffaa0</Color>
+            <Color x:Key="PrimaryColor">#228baa</Color>
+            <Color x:Key="SecondaryColor">#228baa</Color>
+            <Color x:Key="BackgroundColor">#ffffff</Color>
             <Color x:Key="ErrorColor">#ff0000</Color>
-            <Color x:Key="TextColor">#000000</Color>
+            <Color x:Key="TextColor">#ffffff</Color>
 
         </ResourceDictionary>
         <ControlTemplate x:Key="RadioButtonTemplate">
-            <Frame BorderColor="White"
-           BackgroundColor="White"
+            <Frame BorderColor="Gray"
+           BackgroundColor="Gray"
            HasShadow="False"
            HeightRequest="60"
            WidthRequest="300"
