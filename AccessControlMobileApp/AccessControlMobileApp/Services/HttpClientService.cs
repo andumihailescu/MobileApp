@@ -12,13 +12,11 @@ namespace AccessControlMobileApp.Services
     {
         private static readonly HttpClient client = new HttpClient();
 
-        private string ipAddress = "192.168.137.215";
-
         public HttpClientService()
         {
             //DiscoverESP32();
         }
-        public async Task<bool> SendMessage(string message)
+        public async Task<bool> SendMessage(string message, string ipAddress)
         {
             try
             {
@@ -42,7 +40,7 @@ namespace AccessControlMobileApp.Services
             }
         }
 
-        private async Task DiscoverESP32()
+        /*private async Task DiscoverESP32()
         {
             try
             {
@@ -61,6 +59,6 @@ namespace AccessControlMobileApp.Services
             {
 
             }
-        }
+        }*/
     }
 }

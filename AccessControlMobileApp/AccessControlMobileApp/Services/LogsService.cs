@@ -14,7 +14,7 @@ namespace AccessControlMobileApp.Services
             
         }
 
-        public async Task<string> GenerateLogs()
+        /*public async Task<string> GenerateLogs()
         {
             string result;
             DateTime dateTime = DateTime.Now;
@@ -43,7 +43,7 @@ namespace AccessControlMobileApp.Services
                 result = ex.Message;
             }
             return result;
-        }
+        }*/
 
         public async Task<List<Log>> RequestAllLogs()
         {

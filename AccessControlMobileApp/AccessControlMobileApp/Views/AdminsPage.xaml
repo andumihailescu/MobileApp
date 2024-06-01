@@ -41,7 +41,7 @@
                         </ListView.Behaviors>
                         <ListView.ItemTemplate>
                             <DataTemplate>
-                                <TextCell Text="{Binding UserId}" Detail="{Binding Date}" />
+                                <TextCell Text="{Binding UserId}" Detail="{Binding DateAndTime}" />
                                 <!-- Customize the appearance as needed -->
                             </DataTemplate>
                         </ListView.ItemTemplate>

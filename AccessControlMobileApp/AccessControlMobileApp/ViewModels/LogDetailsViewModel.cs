@@ -73,8 +73,8 @@ namespace AccessControlMobileApp.ViewModels
                 }
             }
         }
-        private int _gateId;
-        public int GateId
+        private string _gateId;
+        public string GateId
         {
             get { return _gateId; }
             set
@@ -95,20 +95,9 @@ namespace AccessControlMobileApp.ViewModels
             logData = (Log)log.SelectedItem;
 
             UserId = logData.UserId;
-            Date = logData.Date;
+            Date = logData.DateAndTime;
             IsAdmin = logData.IsAdmin;
-            switch (logData.AccessMethod)
-            {
-                case 0:
-                    AccessMethod = "Nfc";
-                    break;
-                case 1:
-                    AccessMethod = "Bluetooth";
-                    break;
-                case 2:
-                    AccessMethod = "Wi-Fi";
-                    break;
-            }
+            AccessMethod = logData.AccessMethod;
             if (logData.IsApproved)
             {
                 RequestStatus = "Approved";

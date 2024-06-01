@@ -18,7 +18,7 @@
                 IsSpellCheckEnabled="False"
                 IsTextPredictionEnabled="False"
                 PlaceholderColor="Gray"
-                TextColor="Black"/>
+                TextColor="White"/>
             <Entry 
                 x:Name="oldPassword"
                 Text="{Binding OldPassword, Mode=TwoWay}"
@@ -27,7 +27,7 @@
                 IsTextPredictionEnabled="False"
                 IsPassword="True"
                 PlaceholderColor="Gray"
-                TextColor="Black"/>
+                TextColor="White"/>
             <Entry 
                 x:Name="newPassword"
                 Text="{Binding NewPassword, Mode=TwoWay}"
@@ -36,7 +36,7 @@
                 IsTextPredictionEnabled="False"
                 IsPassword="True"
                 PlaceholderColor="Gray"
-                TextColor="Black"/>
+                TextColor="White"/>
             <Button 
                 VerticalOptions="Center" 
                 Text="Save Settings" 

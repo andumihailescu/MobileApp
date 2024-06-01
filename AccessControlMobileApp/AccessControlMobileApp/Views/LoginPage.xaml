@@ -23,7 +23,7 @@
                 IsSpellCheckEnabled="False"
                 IsTextPredictionEnabled="False"
                 PlaceholderColor="Gray"
-                TextColor="Black"/>
+                TextColor="White"/>
             <Entry 
                 x:Name="password"
                 Text="{Binding Password, Mode=TwoWay}"
@@ -32,7 +32,7 @@
                 IsTextPredictionEnabled="False"
                 IsPassword="True"
                 PlaceholderColor="Gray"
-                TextColor="Black"/>
+                TextColor="White"/>
             <Button 
                 VerticalOptions="Center" 
                 Text="Login" 

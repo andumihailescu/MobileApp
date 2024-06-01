@@ -40,10 +40,12 @@ namespace AccessControlMobileApp.ViewModels
                     if (_preferedAccessMethod == 1)
                     {
                         BluetoothAccess = true;
+                        WiFiAccess = false;
                     }
-                    else
+                    else if (_preferedAccessMethod == 2)
                     {
                         BluetoothAccess = false;
+                        WiFiAccess = true;
                     }
                     OnPropertyChanged();
                 }
@@ -62,6 +64,35 @@ namespace AccessControlMobileApp.ViewModels
                 }
             }
         }
+
+        private bool _wiFiAccess;
+        public bool WiFiAccess
+        {
+            get { return _wiFiAccess; }
+            set
+            {
+                if (_wiFiAccess != value)
+                {
+                    _wiFiAccess = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
+        private string _ipAddress;
+        public string IpAddress
+        {
+            get { return _ipAddress; }
+            set
+            {
+                if (_ipAddress != value)
+                {
+                    _ipAddress = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
         private bool _isLoading;
         public bool IsLoading
         {
@@ -125,7 +156,7 @@ namespace AccessControlMobileApp.ViewModels
             }
             if (PreferedAccessMethod == 2)
             {
-                await App.HttpClientService.SendMessage(userService.UserAuthCredentials.User.Uid);
+                await App.HttpClientService.SendMessage(userService.UserAuthCredentials.User.Uid, IpAddress);
             }
         }
 

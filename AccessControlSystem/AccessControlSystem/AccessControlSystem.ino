@@ -64,7 +64,6 @@ bool signupOK = false;
 
 WiFiUDP ntpUDP;
 NTPClient timeClient(ntpUDP, "pool.ntp.org", 3600, 60000); // NTP server, time offset in seconds, update interval in milliseconds
-String dateAndTime;
 int accessLevel;
 bool isAdmin;
 bool isApproved;
@@ -369,22 +368,24 @@ void GetUserData(String json) {
 
 void SaveLogsInsideDatabase(String userId) {
 
-  String dateAndTime = getDateAndTimeString();
-  String nodePath = "/z_logs/" + dateAndTime + userId + "/UserId";
+  String rawDate;
+  String formattedDate;
+  GetDateAndTimeString(rawDate, formattedDate);
+  String nodePath = "/z_logs/" + rawDate + userId + "/UserId";
   Firebase.RTDB.setString(&fbdo, nodePath.c_str(), userId.c_str());
-  nodePath = "/z_logs/" + dateAndTime + userId + "/IsAdmin";
+  nodePath = "/z_logs/" + rawDate + userId + "/IsAdmin";
   Firebase.RTDB.setString(&fbdo, nodePath.c_str(), isAdmin);
-  nodePath = "/z_logs/" + dateAndTime + userId + "/AccessMethod";
+  nodePath = "/z_logs/" + rawDate + userId + "/AccessMethod";
   Firebase.RTDB.setString(&fbdo, nodePath.c_str(), accessMethod.c_str());
-  nodePath = "/z_logs/" + dateAndTime + userId + "/GateId";
+  nodePath = "/z_logs/" + rawDate + userId + "/GateId";
   Firebase.RTDB.setString(&fbdo, nodePath.c_str(), GATE_ID);
-  nodePath = "/z_logs/" + dateAndTime + userId + "/IsApproved";
+  nodePath = "/z_logs/" + rawDate + userId + "/IsApproved";
   Firebase.RTDB.setString(&fbdo, nodePath.c_str(), isApproved);
-  nodePath = "/z_logs/" + dateAndTime + userId + "/DateAndTime";
-  Firebase.RTDB.setString(&fbdo, nodePath.c_str(), dateAndTime.c_str());
+  nodePath = "/z_logs/" + rawDate + userId + "/DateAndTime";
+  Firebase.RTDB.setString(&fbdo, nodePath.c_str(), formattedDate.c_str());
 }
 
-String getDateAndTimeString() {
+void GetDateAndTimeString(String &rawDate, String &formattedDate) {
   String dateAndTime;
   timeClient.update();
   unsigned long epochTime = timeClient.getEpochTime();
@@ -396,6 +397,9 @@ String getDateAndTimeString() {
   int minute = ptm->tm_min;
   int second = ptm->tm_sec;
   char buffer[13];
+  char formattedBuffer[20];
   snprintf(buffer, sizeof(buffer), "%02d%02d%02d%02d%02d%02d", year, month, day, hour, minute, second);
-  return String(buffer);
+  snprintf(formattedBuffer, sizeof(formattedBuffer), "%02d:%02d:%02d %02d/%02d/%02d", hour, minute, second, day, month, year % 100);
+  rawDate = (String)buffer;
+  formattedDate =(String)formattedBuffer;
 }

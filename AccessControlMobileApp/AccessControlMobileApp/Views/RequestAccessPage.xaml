@@ -38,8 +38,12 @@
                       ItemTapped="ListView_ItemTapped">
             </ListView>
         </StackLayout>
+        <Entry Text="{Binding IpAddress, Mode=TwoWay}"
+               IsVisible="{Binding WiFiAccess}"
+               Placeholder="Ip Address">
+        </Entry>
         <ActivityIndicator IsVisible="{Binding IsLoading}"
                            IsRunning="{Binding IsLoading}"
-                           Scale="0.3" />
+                           Scale="1" />
     </StackLayout>
 </ContentPage>
