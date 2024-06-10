@@ -38,17 +38,21 @@ namespace AccessControlMobileApp.Services
                 {
                     await bluetoothAdapter.StartScanningForDevicesAsync();
                 }
+
+                // I see no reason to iterate through the ConnectedDevices; why don't you return it?
                 foreach (var device in bluetoothAdapter.ConnectedDevices)
                     bluetoothDevices.Add(device);
             }
             catch (Exception ex)
             {
+                // throw an exception here, don't write messages to console
                 Console.WriteLine($"Error scanning for BLE devices: {ex.Message}");
             }
 
             return bluetoothDevices;
         }
 
+        // See the comments on AdminService
         public async Task<bool> ConnectToDevice(object device)
         {
 
