@@ -79,15 +79,15 @@ namespace AccessControlMobileApp.ViewModels
             }
         }
 
-        private string _ipAddress;
-        public string IpAddress
+        private string _roomId;
+        public string RoomId
         {
-            get { return _ipAddress; }
+            get { return _roomId; }
             set
             {
-                if (_ipAddress != value)
+                if (_roomId != value)
                 {
-                    _ipAddress = value;
+                    _roomId = value;
                     OnPropertyChanged();
                 }
             }
@@ -156,7 +156,7 @@ namespace AccessControlMobileApp.ViewModels
             }
             if (PreferedAccessMethod == 2)
             {
-                await App.HttpClientService.SendMessage(userService.UserAuthCredentials.User.Uid, IpAddress);
+                await App.HttpClientService.SendMessage(userService.UserAuthCredentials.User.Uid, RoomId);
             }
         }
 

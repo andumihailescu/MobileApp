@@ -1,6 +1,5 @@
 #include <Wire.h>
 #include <Adafruit_PN532.h>
-#include <ESP32Servo.h>
 #include <BLEDevice.h>
 #include <BLEUtils.h>
 #include <BLEServer.h>
@@ -19,7 +18,7 @@
 
 #define SDA_PIN 21
 #define SCL_PIN 22
-#define SERVO_MOTOR_ANGLE 50
+#define CTRL_PIN 4
 #define REQUIRED_ACCESS_LEVEL 2
 #define GATE_ID "IM414"
 #define SERVICE_UUID        "931058ce-581b-4344-996e-aef3da80fc1d"
@@ -30,9 +29,6 @@
 #define API_KEY "AIzaSyAHl-cJy8zniA0u7yQSu8hZ7avsToaAgEA"
 #define DATABASE_URL "https://accesscontrolmobileapp-default-rtdb.europe-west1.firebasedatabase.app/" 
 
-Servo myServo;
-//A12, GND A19 & 3v3 J19
-int servoPin = 19;
 U8G2_SSD1306_128X64_NONAME_1_4W_SW_SPI u8g2(U8G2_R0, /* clock=*/ 18, /* data=*/ 23, /* cs=*/ 5, /* dc=*/ 17, /* reset=*/ 16);
 Adafruit_PN532 nfc(SDA_PIN, SCL_PIN);
 
@@ -109,25 +105,15 @@ void configureBle() {
   pService = pServer->createService(SERVICE_UUID);
   pCharacteristic = pService->createCharacteristic(
                                          CHARACTERISTIC_UUID,
-                                         BLECharacteristic::PROPERTY_READ |
                                          BLECharacteristic::PROPERTY_WRITE
                                        );
-
-  //pCharacteristic->setValue("Hello World says Neil");
   pService->start();
-  // BLEAdvertising *pAdvertising = pServer->getAdvertising();  // this still is working for backward compatibility
-  pAdvertising = BLEDevice::getAdvertising();
-  pAdvertising->addServiceUUID(SERVICE_UUID);
-  pAdvertising->setScanResponse(true);
-  pAdvertising->setMinPreferred(0x06);  // functions that help with iPhone connections issue
-  pAdvertising->setMinPreferred(0x12);
-  BLEDevice::startAdvertising();
-  Serial.println("Characteristic defined! Now you can read it in your phone!");
+  pServer->getAdvertising()->start();
+  Serial.println("Waiting client connection...");
 }
 
 void configureAp() {
   
-  //WiFi.config(staticIP, gateway, subnet);
   WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
   Serial.println("\nConnecting");
 
@@ -165,8 +151,8 @@ void configureAp() {
 
 void setup(void) {
   Serial.begin(115200);
-  myServo.attach(servoPin);
   configureDisplay();
+  pinMode(CTRL_PIN, OUTPUT);
   configureNfc();
   configureBle();
   configureAp();
@@ -193,12 +179,12 @@ void loop(void) {
     if (requestStatus == 1) {
       isApproved = true;
       Serial.println("Access approved");
-      myServo.write(SERVO_MOTOR_ANGLE);
+      digitalWrite(CTRL_PIN, HIGH);
       DisplayRequestStatus(isApproved);
       delay(3000);
       ClearDisplay();
       delay(7000);
-      myServo.write(0);
+      digitalWrite(CTRL_PIN, LOW);
       SaveLogsInsideDatabase(receivedMessage);
     } else if (requestStatus == 0) {
       isApproved = false;

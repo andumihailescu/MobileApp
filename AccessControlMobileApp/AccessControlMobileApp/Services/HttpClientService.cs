@@ -14,13 +14,13 @@ namespace AccessControlMobileApp.Services
 
         public HttpClientService()
         {
-            //DiscoverESP32();
+            
         }
-        public async Task<bool> SendMessage(string message, string ipAddress)
+        public async Task<bool> SendMessage(string message, string roomId)
         {
             try
             {
-                string address = "http://" + ipAddress + "/";
+                string address = "http://" + roomId + ".local" + "/";
                 var uri = new Uri(address);
                 var content = new StringContent(message + "\r\n", Encoding.UTF8, "text/plain");
                 HttpResponseMessage response = await client.PostAsync(uri, content);
@@ -39,26 +39,5 @@ namespace AccessControlMobileApp.Services
                 return false;
             }
         }
-
-        /*private async Task DiscoverESP32()
-        {
-            try
-            {
-                var domains = await ZeroconfResolver.BrowseDomainsAsync();
-                var responses = await ZeroconfResolver.ResolveAsync(domains.Select(d => d.Key));
-
-                foreach (var resp in responses)
-                {
-                    if (resp.DisplayName.Contains("IM414"))
-                    {
-                        ipAddress = resp.IPAddress;
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-
-            }
-        }*/
     }
 }

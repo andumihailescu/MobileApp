@@ -38,9 +38,9 @@
                       ItemTapped="ListView_ItemTapped">
             </ListView>
         </StackLayout>
-        <Entry Text="{Binding IpAddress, Mode=TwoWay}"
+        <Entry Text="{Binding RoomId, Mode=TwoWay}"
                IsVisible="{Binding WiFiAccess}"
-               Placeholder="Ip Address">
+               Placeholder="Room Id">
         </Entry>
         <ActivityIndicator IsVisible="{Binding IsLoading}"
                            IsRunning="{Binding IsLoading}"
