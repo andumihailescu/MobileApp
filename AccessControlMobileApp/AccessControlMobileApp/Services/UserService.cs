@@ -83,9 +83,6 @@ namespace AccessControlMobileApp.Services
                     case 3:
                         UserData.PreferedAccessMethod = Convert.ToInt32(item.Object.ToString());
                         break;
-                    case 4:
-                        UserData.Username = item.Object.ToString();
-                        break;
                 }
                 i++;
             }
@@ -104,7 +101,7 @@ namespace AccessControlMobileApp.Services
             }
         }
 
-        public async Task<string> RegisterUser(string email, string password, string username, bool isAdmin, int accessLevel)
+        public async Task<string> RegisterUser(string email, string password, bool isAdmin, int accessLevel)
         {
             string result;
 
@@ -116,7 +113,7 @@ namespace AccessControlMobileApp.Services
 
             try
             {
-                UserAuthCredentials = await userAuthClient.CreateUserWithEmailAndPasswordAsync(email, password, username);
+                UserAuthCredentials = await userAuthClient.CreateUserWithEmailAndPasswordAsync(email, password);
                 result = null;
             }
             catch (FirebaseAuthHttpException ex)
@@ -139,7 +136,6 @@ namespace AccessControlMobileApp.Services
 
                 var user = new
                 {
-                    Username = username,
                     Email = email,
                     AccessLevel = accessLevel,
                     PreferedAccessMethod = 2,
@@ -173,7 +169,7 @@ namespace AccessControlMobileApp.Services
             return error;
         }
 
-        public async Task<string> SaveUserSettings(string username, int preferedAccessMethod)
+        public async Task<string> SaveUserSettings(int preferedAccessMethod)
         {
             string result;
             string userId = UserAuthCredentials.User.Uid;
@@ -188,7 +184,6 @@ namespace AccessControlMobileApp.Services
             }
             var updates = new Dictionary<string, object>
             {
-                { "Username", username },
                 { "PreferedAccessMethod", preferedAccessMethod }  
             };
 
@@ -196,7 +191,6 @@ namespace AccessControlMobileApp.Services
             {
                 await databaseClient.Child(path).PatchAsync(updates);
                 userData.PreferedAccessMethod = preferedAccessMethod;
-                userData.Username = username;
                 result = null;
             }
             catch (Exception ex)
@@ -207,12 +201,12 @@ namespace AccessControlMobileApp.Services
             return result;
         }
 
-        public async Task<string> SaveAccountSettings(string email, string oldPassword, string newPassword)
+        public async Task<string> SaveAccountSettings(string oldPassword, string newPassword)
         {
             string result;
             try
             {
-                await userAuthClient.SignInWithEmailAndPasswordAsync(email, oldPassword);
+                await userAuthClient.SignInWithEmailAndPasswordAsync(userData.Email, oldPassword);
                 await userAuthClient.User.ChangePasswordAsync(newPassword);
                 result = null;
             }
@@ -222,34 +216,31 @@ namespace AccessControlMobileApp.Services
             }
             if ((result == null) && (UserData.FirstTimeLogin == true))
             {
-
-            }
-
-            string userId = UserAuthCredentials.User.Uid;
-            string path;
-            if (userData.IsAdmin)
+                string userId = UserAuthCredentials.User.Uid;
+                string path;
+                if (userData.IsAdmin)
+                {
+                    path = $"admins/{userId}";
+                }
+                else
+                {
+                    path = $"users/{userId}";
+                }
+                var updates = new Dictionary<string, object>
             {
-                path = $"admins/{userId}";
-            }
-            else
-            {
-                path = $"users/{userId}";
-            }
-            var updates = new Dictionary<string, object>
-            {
-                { "FirstTimeLogin", !UserData.FirstTimeLogin }
+                { "FirstTimeLogin", false }
             };
-            try
-            {
-                await databaseClient.Child(path).PatchAsync(updates);
-                userData.FirstTimeLogin = !UserData.FirstTimeLogin;
-                result = null;
+                try
+                {
+                    await databaseClient.Child(path).PatchAsync(updates);
+                    userData.FirstTimeLogin = false;
+                    result = null;
+                }
+                catch (Exception ex)
+                {
+                    result = ex.Message;
+                }
             }
-            catch (Exception ex)
-            {
-                result = ex.Message;
-            }
-
 
             return result;
         }

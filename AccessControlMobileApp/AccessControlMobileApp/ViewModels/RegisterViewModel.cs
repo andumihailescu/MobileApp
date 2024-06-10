@@ -10,19 +10,6 @@ namespace AccessControlMobileApp.ViewModels
 {
     public class RegisterViewModel : BaseViewModel
     {
-        private string _username;
-        public string Username
-        {
-            get { return _username; }
-            set
-            {
-                if (_username != value)
-                {
-                    _username = value;
-                    OnPropertyChanged();
-                }
-            }
-        }
         private string _email;
         public string Email
         {
@@ -100,7 +87,7 @@ namespace AccessControlMobileApp.ViewModels
         private async Task OnRegisterClicked()
         {
             var userService = App.UserService;
-            var result = await userService.RegisterUser(Email, Password, Username, IsAdmin, SelectedIndex);
+            var result = await userService.RegisterUser(Email, Password, IsAdmin, SelectedIndex);
             if (result == null)
             {
                 await Application.Current.MainPage.DisplayAlert("Seccess", "User Registered", "OK");

@@ -52,7 +52,7 @@
             <StackLayout Grid.Row="1" Orientation="Vertical" Padding="10,0,10,0" IsVisible="{Binding IsUserListVisible}">
                 <Button 
                     VerticalOptions="Center" 
-                    Text="Go To Registration"
+                    Text="Create New User"
                     Command="{Binding GoToRegisterPageCommand}"
                     BackgroundColor="{StaticResource PrimaryColor}"/>
             </StackLayout>

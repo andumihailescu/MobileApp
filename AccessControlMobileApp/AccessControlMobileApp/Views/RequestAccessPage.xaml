@@ -14,11 +14,11 @@
                     Command="{Binding RequestAccessCommand}"
                     BackgroundColor="{StaticResource PrimaryColor}"
                     TextColor="White" />
-        <Button Margin="0,10,0,0" Text="Modify User Settings"
+        <Button Margin="0,10,0,0" Text="Change Access Method"
                     Command="{Binding GoToUserSettingsCommand}"
                     BackgroundColor="{StaticResource PrimaryColor}"
                     TextColor="White" />
-        <Button Margin="0,10,0,0" Text="Modify Email and Password"
+        <Button Margin="0,10,0,0" Text="Change Password"
                 Command="{Binding GoToAccountSettingsCommand}"
                 BackgroundColor="{StaticResource PrimaryColor}"
                 TextColor="White" />
@@ -26,7 +26,7 @@
                 Command="{Binding LogoutCommand}"
                 BackgroundColor="{StaticResource PrimaryColor}"
                 TextColor="White" />
-        <Button Margin="0,10,0,0" Text="Only admins"
+        <Button Margin="0,10,0,0" Text="Admins' Menu"
                 IsVisible="{Binding HasAdminRights}"
                 Command="{Binding GoToAdminsPageCommand}"
                 BackgroundColor="{StaticResource PrimaryColor}"

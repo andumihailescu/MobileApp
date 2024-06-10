@@ -10,19 +10,6 @@ namespace AccessControlMobileApp.ViewModels
 {
     public class UserDetailsViewModel : BaseViewModel
     {
-        private string _username;
-        public string Username
-        {
-            get { return _username; }
-            set
-            {
-                if (_username != value)
-                {
-                    _username = value;
-                    OnPropertyChanged();
-                }
-            }
-        }
         private string _email;
         public string Email
         {
@@ -149,7 +136,6 @@ namespace AccessControlMobileApp.ViewModels
             SelectedItemChangedEventArgs user = (SelectedItemChangedEventArgs)obj;
             userData = (UserData)user.SelectedItem;
 
-            Username = userData.Username;
             Email = userData.Email;
             IsAdmin = userData.IsAdmin;
             AccessLevel = userData.AccessLevel;
@@ -180,7 +166,7 @@ namespace AccessControlMobileApp.ViewModels
             else
             {
                 AccessLevel = SelectedIndex;
-                await App.AdminService.UpdateUserData(userData, Username, Email, IsAdmin, AccessLevel);
+                await App.AdminService.UpdateUserData(userData, Email, IsAdmin, AccessLevel);
                 BtnText = "Edit User Data";
                 IsInEditingMode = false;
                 IsInDisplayMode = true;

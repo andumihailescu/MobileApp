@@ -52,7 +52,7 @@ namespace AccessControlMobileApp.Services
             }
         }
 
-        public async Task<string> UpdateUserData(UserData userData, string username, string email, bool isAdmin, int accessLevel)
+        public async Task<string> UpdateUserData(UserData userData, string email, bool isAdmin, int accessLevel)
         {
             string result = null;
             string path;
@@ -75,7 +75,6 @@ namespace AccessControlMobileApp.Services
 
                     var user = new
                     {
-                        Username = username,
                         Email = email,
                         AccessLevel = accessLevel,
                         PreferedAccessMethod = userData.PreferedAccessMethod,
@@ -108,7 +107,6 @@ namespace AccessControlMobileApp.Services
                 }
                 var updates = new Dictionary<string, object>
                 {
-                    { "Username", username },
                     { "Email", email },
                     { "AccessLevel", accessLevel }
                 };

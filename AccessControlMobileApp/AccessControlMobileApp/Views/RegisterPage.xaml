@@ -16,16 +16,6 @@
     <ContentPage.Content>
         <StackLayout Padding="10,0,10,0" VerticalOptions="Center">
             <Entry 
-                x:Name="username"
-                Text="{Binding Username, Mode=TwoWay}"
-                Placeholder="Username"
-                TextTransform="Uppercase"
-                MaxLength="8"
-                IsSpellCheckEnabled="False"
-                IsTextPredictionEnabled="False"
-                PlaceholderColor="Gray"
-                TextColor="White"/>
-            <Entry 
                 x:Name="email"
                 Text="{Binding Email, Mode=TwoWay}"
                 Placeholder="Email"

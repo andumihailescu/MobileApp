@@ -24,16 +24,7 @@
             <RadioButton Content="Wi-Fi" 
                          TextColor="White"
                          IsChecked="{Binding WifiRadioButtonChecked}"/>
-            <Entry 
-                x:Name="username"
-                Text="{Binding Username, Mode=TwoWay}"
-                Placeholder="Username"
-                TextTransform="Lowercase"
-                IsSpellCheckEnabled="False"
-                IsTextPredictionEnabled="False"
-                PlaceholderColor="Gray"
-                TextColor="White"/>
-            <Button Margin="0,10,0,0" Text="Save Settings"
+            <Button Margin="0,10,0,0" Text="Save Method"
                     Command="{Binding SaveSettings}"
                     BackgroundColor="{StaticResource PrimaryColor}"
                     TextColor="White" />

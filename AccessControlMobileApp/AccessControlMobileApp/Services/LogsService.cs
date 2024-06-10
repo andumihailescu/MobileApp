@@ -14,37 +14,6 @@ namespace AccessControlMobileApp.Services
             
         }
 
-        /*public async Task<string> GenerateLogs()
-        {
-            string result;
-            DateTime dateTime = DateTime.Now;
-            string date = dateTime.ToString("dd/MM/yy") + " " + dateTime.ToString("HH:mm:ss");
-
-            var userService = App.UserService;
-            string logId = dateTime.ToString("yyMMddHHmmss") + userService.UserAuthCredentials.User.Uid;
-            string path = $"z_logs/{logId}";
-
-            Log log = new Log(
-                userId: userService.UserAuthCredentials.User.Uid,
-                date: date,
-                gateId: 8,
-                isAdmin: userService.UserData.IsAdmin,
-                accessMethod: userService.UserData.PreferedAccessMethod,
-                isApproved: true
-            );
-
-            try
-            {
-                await databaseClient.Child(path).PutAsync(log);
-                result = null;
-            }
-            catch (Exception ex)
-            {
-                result = ex.Message;
-            }
-            return result;
-        }*/
-
         public async Task<List<Log>> RequestAllLogs()
         {
             List<Log> logs = new List<Log>();
@@ -81,7 +50,6 @@ namespace AccessControlMobileApp.Services
                     UserData userData = new UserData(
                         userId: childSnapshot.Key,
                         email: childSnapshot.Object.Email,
-                        username: childSnapshot.Object.Username,
                         isAdmin: true,
                         accessLevel: childSnapshot.Object.AccessLevel,
                         preferedAccessMethod: childSnapshot.Object.PreferedAccessMethod,
@@ -98,7 +66,6 @@ namespace AccessControlMobileApp.Services
                     UserData userData = new UserData(
                         userId: childSnapshot.Key,
                         email: childSnapshot.Object.Email,
-                        username: childSnapshot.Object.Username,
                         isAdmin: false,
                         accessLevel: childSnapshot.Object.AccessLevel,
                         preferedAccessMethod: childSnapshot.Object.PreferedAccessMethod,

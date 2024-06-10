@@ -132,7 +132,7 @@ namespace AccessControlMobileApp.ViewModels
         {
             RequestAccessCommand = new Command(async () => await OnRequestAccessClicked());
             GoToUserSettingsCommand = new Command(async () => await GoToUserSettingsClicked());
-            GoToAccountSettingsCommand = new Command(GoToAccountSettingsClicked);
+            GoToAccountSettingsCommand = new Command(async () => await GoToAccountSettingsClicked());
             LogoutCommand = new Command(OnLogoutClicked);
             GoToAdminsPageCommand = new Command(async () => await GoToAdminsPage());
             ScanButtonClicked = new Command(async () => await OnScanButtonClicked());
@@ -165,9 +165,9 @@ namespace AccessControlMobileApp.ViewModels
             await Application.Current.MainPage.Navigation.PushModalAsync(new UserSettingsPage());
         }
 
-        public void GoToAccountSettingsClicked()
+        public async Task GoToAccountSettingsClicked()
         {
-            Application.Current.MainPage = new AccountSettingsPage();
+            await Application.Current.MainPage.Navigation.PushModalAsync(new AccountSettingsPage());
         }
 
         public void OnLogoutClicked()

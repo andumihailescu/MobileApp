@@ -59,7 +59,7 @@ namespace AccessControlMobileApp.ViewModels
         public async Task OnSaveSettingsClicked()
         {
             var userService = App.UserService;
-            var result = await userService.SaveAccountSettings(Email, OldPassword, NewPassword);
+            var result = await userService.SaveAccountSettings(OldPassword, NewPassword);
             if (result == null)
             {
                 await Application.Current.MainPage.DisplayAlert("Seccess", "Password Changed", "OK");

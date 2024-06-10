@@ -11,15 +11,6 @@
     <ContentPage.Content>
         <StackLayout Padding="10,0,10,0" VerticalOptions="Center">
             <Entry 
-                x:Name="email"
-                Text="{Binding Email, Mode=TwoWay}"
-                Placeholder="Email"
-                TextTransform="Lowercase"
-                IsSpellCheckEnabled="False"
-                IsTextPredictionEnabled="False"
-                PlaceholderColor="Gray"
-                TextColor="White"/>
-            <Entry 
                 x:Name="oldPassword"
                 Text="{Binding OldPassword, Mode=TwoWay}"
                 Placeholder="Old Password"
@@ -39,7 +30,7 @@
                 TextColor="White"/>
             <Button 
                 VerticalOptions="Center" 
-                Text="Save Settings" 
+                Text="Save New Password"
                 Command="{Binding SaveSettings}"
                 BackgroundColor="{StaticResource PrimaryColor}"/>
         </StackLayout>

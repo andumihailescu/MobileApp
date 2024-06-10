@@ -50,21 +50,6 @@ namespace AccessControlMobileApp.ViewModels
             }
         }
 
-        private string _username;
-
-        public string Username
-        {
-            get { return _username; }
-            set
-            {
-                if (_username != value)
-                {
-                    _username = value;
-                    OnPropertyChanged();
-                }
-            }
-        }
-
         public Command SaveSettings { get; set; }
 
         public UserSettingsViewModel()
@@ -90,7 +75,7 @@ namespace AccessControlMobileApp.ViewModels
             }
 
             var userService = App.UserService;
-            var result = await userService.SaveUserSettings(Username, preferedAccessMethod);
+            var result = await userService.SaveUserSettings(preferedAccessMethod);
             if (result == null)
             {
                 await Application.Current.MainPage.DisplayAlert("Seccess", "Settings Changed", "OK");
@@ -122,8 +107,6 @@ namespace AccessControlMobileApp.ViewModels
                 BluetoothRadioButtonChecked = false;
                 WifiRadioButtonChecked = true;
             }
-
-            Username = App.UserService.UserData.Username;
         }
     }
 }
