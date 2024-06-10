@@ -26,9 +26,12 @@ namespace AccessControlMobileApp.Services
             });
         }
 
-
+        // We should not have a bool here; replace Task<bool> with Task. 
+        // If something gets wrong, an exception should be thrown
+        // Replace UserData with User
         public async Task<bool> DeleteUser(UserData userData)
         {
+            // Extract path building in a separate private method
             string path;
             if (userData.IsAdmin)
             {
@@ -52,6 +55,12 @@ namespace AccessControlMobileApp.Services
             }
         }
 
+        // Replace UserData with User
+        // Replace UpdateUserData with UpdateUser
+        // We should not have a string here; replace Task<string> with Task
+        // The User should be updated before calling UpdateUser
+        // SRP (Single Responsibility Principle) is violated; this method is doing more than one thing
+        // Too many method parameters -> Clean Code
         public async Task<string> UpdateUserData(UserData userData, string email, bool isAdmin, int accessLevel)
         {
             string result = null;
@@ -97,6 +106,7 @@ namespace AccessControlMobileApp.Services
             }
             else
             {
+                // Duplicated code -> Code smell
                 if (isAdmin)
                 {
                     path = $"admins/{userData.UserId}";
