@@ -223,7 +223,6 @@ namespace AccessControlMobileApp.ViewModels
                 await Application.Current.MainPage.DisplayAlert("Error connecting", $"Error connecting to BLE device: {device.ToString() ?? "N/A"}", "Retry");
             }
 
-
             IsLoading = false;
         }
     }

@@ -23,6 +23,7 @@ namespace AccessControlMobileApp.ViewModels
                 }
             }
         }
+        
         private bool _isAdmin;
         public bool IsAdmin
         {
@@ -36,6 +37,7 @@ namespace AccessControlMobileApp.ViewModels
                 }
             }
         }
+        
         private int _accessLevel;
         public int AccessLevel
         {
@@ -49,6 +51,7 @@ namespace AccessControlMobileApp.ViewModels
                 }
             }
         }
+        
         private int _preferedAccessMethod;
         public int PreferedAccessMethod
         {
@@ -62,6 +65,7 @@ namespace AccessControlMobileApp.ViewModels
                 }
             }
         }
+        
         private string _btnText;
         public string BtnText
         {
@@ -75,6 +79,7 @@ namespace AccessControlMobileApp.ViewModels
                 }
             }
         }
+        
         private bool _isInDisplayMode;
         public bool IsInDisplayMode
         {
@@ -88,6 +93,7 @@ namespace AccessControlMobileApp.ViewModels
                 }
             }
         }
+        
         private bool _isInEditingMode;
         public bool IsInEditingMode
         {
@@ -111,6 +117,7 @@ namespace AccessControlMobileApp.ViewModels
         private object selectedItem;
         public object SelectedItem { get; set; }
         private int selectedIndex;
+        
         public int SelectedIndex
         {
             get { return selectedIndex; }

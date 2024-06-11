@@ -1,5 +1,8 @@
 ﻿using AccessControlMobileApp.Services;
 using AccessControlMobileApp.Views;
+
+using Microsoft.Extensions.Configuration;
+
 using System;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
@@ -22,6 +25,15 @@ namespace AccessControlMobileApp
 
         protected override void OnStart()
         {
+            var builder = new ConfigurationBuilder()
+                .AddJsonFile($"appsettings.json", true, true);
+
+            var config = builder.Build();
+
+            var apiKey = config["ApiKey"];
+            var authDomain = config["AuthDomain"];
+            var firebaseUrl = config["FirebaseUrl"];
+                        
             UserService = new UserService();
             LogsService = new LogsService();
             BluetoothService = new BluetoothService();
