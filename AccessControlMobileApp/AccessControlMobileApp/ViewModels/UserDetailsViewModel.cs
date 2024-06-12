@@ -1,8 +1,5 @@
 ﻿using AccessControlMobileApp.Models;
-using AccessControlMobileApp.Services;
-using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 using Xamarin.Forms;
 
@@ -23,7 +20,6 @@ namespace AccessControlMobileApp.ViewModels
                 }
             }
         }
-        
         private bool _isAdmin;
         public bool IsAdmin
         {
@@ -37,7 +33,6 @@ namespace AccessControlMobileApp.ViewModels
                 }
             }
         }
-        
         private int _accessLevel;
         public int AccessLevel
         {
@@ -51,7 +46,6 @@ namespace AccessControlMobileApp.ViewModels
                 }
             }
         }
-        
         private int _preferedAccessMethod;
         public int PreferedAccessMethod
         {
@@ -65,7 +59,6 @@ namespace AccessControlMobileApp.ViewModels
                 }
             }
         }
-        
         private string _btnText;
         public string BtnText
         {
@@ -79,7 +72,6 @@ namespace AccessControlMobileApp.ViewModels
                 }
             }
         }
-        
         private bool _isInDisplayMode;
         public bool IsInDisplayMode
         {
@@ -93,7 +85,6 @@ namespace AccessControlMobileApp.ViewModels
                 }
             }
         }
-        
         private bool _isInEditingMode;
         public bool IsInEditingMode
         {
@@ -117,7 +108,6 @@ namespace AccessControlMobileApp.ViewModels
         private object selectedItem;
         public object SelectedItem { get; set; }
         private int selectedIndex;
-        
         public int SelectedIndex
         {
             get { return selectedIndex; }
@@ -131,7 +121,7 @@ namespace AccessControlMobileApp.ViewModels
             }
         }
 
-        private UserData userData;
+        private User user;
 
         public Command OnManageUserCommand { get; set; }
         public Command OnDeleteUserAccountCommand { get; set; }
@@ -141,12 +131,12 @@ namespace AccessControlMobileApp.ViewModels
             OnManageUserCommand = new Command(async () => await ManageUser());
             OnDeleteUserAccountCommand = new Command(async () => await DeleteUserAccount());
             SelectedItemChangedEventArgs user = (SelectedItemChangedEventArgs)obj;
-            userData = (UserData)user.SelectedItem;
+            this.user = (User)user.SelectedItem;
 
-            Email = userData.Email;
-            IsAdmin = userData.IsAdmin;
-            AccessLevel = userData.AccessLevel;
-            PreferedAccessMethod = userData.PreferedAccessMethod;
+            Email = this.user.Email;
+            IsAdmin = this.user.IsAdmin;
+            AccessLevel = this.user.AccessLevel;
+            PreferedAccessMethod = this.user.PreferedAccessMethod;
 
             BtnText = "Edit User Data";
             IsInEditingMode = false;
@@ -173,7 +163,7 @@ namespace AccessControlMobileApp.ViewModels
             else
             {
                 AccessLevel = SelectedIndex;
-                await App.AdminService.UpdateUserData(userData, Email, IsAdmin, AccessLevel);
+                await App.AdminService.UpdateUser(user, Email, IsAdmin, AccessLevel);
                 BtnText = "Edit User Data";
                 IsInEditingMode = false;
                 IsInDisplayMode = true;
@@ -183,7 +173,7 @@ namespace AccessControlMobileApp.ViewModels
 
         public async Task DeleteUserAccount()
         {
-            await App.AdminService.DeleteUser(userData);
+            await App.AdminService.DeleteUser(user);
             await Application.Current.MainPage.Navigation.PopModalAsync();
         }
     }

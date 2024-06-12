@@ -23,8 +23,8 @@ namespace AccessControlMobileApp.ViewModels
             }
         }
 
-        private ObservableCollection<UserData> _usersData;
-        public ObservableCollection<UserData> UsersData
+        private ObservableCollection<User> _usersData;
+        public ObservableCollection<User> UsersData
         {
             get { return _usersData; }
             set
@@ -85,14 +85,14 @@ namespace AccessControlMobileApp.ViewModels
 
         public async Task OnRequestAllLogsClicked()
         {
-            Logs = new ObservableCollection<Log>(await App.LogsService.RequestAllLogs());
+            Logs = new ObservableCollection<Log>(await App.AdminService.RequestAllLogs());
             IsLogsListVisible = true;
             IsUserListVisible = false;
         }
 
         public async Task OnRequestAllUsersDataClicked()
         {
-            UsersData = new ObservableCollection<UserData>(await App.LogsService.RequestAllUsersData());
+            UsersData = new ObservableCollection<User>(await App.AdminService.RequestAllUsers());
             IsLogsListVisible = false;
             IsUserListVisible = true;
         }

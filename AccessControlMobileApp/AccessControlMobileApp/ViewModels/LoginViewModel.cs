@@ -54,7 +54,8 @@ namespace AccessControlMobileApp.ViewModels
             if (result == null)
             {
                 await App.UserService.RequestUserData();
-                if (userService.UserData.FirstTimeLogin)
+                await App.UserService.StoreLastLoginDate();
+                if (userService.User.LastLoginDate.Length == 0)
                 {
                     Password = "";
                     await Application.Current.MainPage.Navigation.PushModalAsync(new AccountSettingsPage());

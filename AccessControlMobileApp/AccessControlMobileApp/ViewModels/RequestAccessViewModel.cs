@@ -138,9 +138,9 @@ namespace AccessControlMobileApp.ViewModels
             ScanButtonClicked = new Command(async () => await OnScanButtonClicked());
             SelectBluetoothDevice = new Command(async (object device) => await OnSelectBluetoothDevice(device));
 
-            HasAdminRights = App.UserService.UserData.IsAdmin;
+            HasAdminRights = App.UserService.User.IsAdmin;
             userService = App.UserService;
-            PreferedAccessMethod = userService.UserData.PreferedAccessMethod;
+            PreferedAccessMethod = userService.User.PreferedAccessMethod;
         }
 
         public async Task OnRequestAccessClicked()
@@ -222,6 +222,7 @@ namespace AccessControlMobileApp.ViewModels
             {
                 await Application.Current.MainPage.DisplayAlert("Error connecting", $"Error connecting to BLE device: {device.ToString() ?? "N/A"}", "Retry");
             }
+
 
             IsLoading = false;
         }

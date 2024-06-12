@@ -1,119 +1,126 @@
-﻿using Firebase.Auth.Requests;
-using FirebaseAdmin;
+﻿using FirebaseAdmin;
 using FirebaseAdmin.Auth;
 using Google.Apis.Auth.OAuth2;
 using System;
 using System.Collections.Generic;
-using System.Security.Cryptography;
-using System.Text;
 using System.Threading.Tasks;
-using static Google.Apis.Requests.BatchRequest;
-using Xamarin.Essentials;
 using AccessControlMobileApp.Models;
 using Firebase.Database.Query;
+using Firebase.Auth.Providers;
+using Firebase.Auth;
+using Firebase.Database;
 
 namespace AccessControlMobileApp.Services
 {
-    public class AdminService : Database
+    public class AdminService
     {
+        protected FirebaseAuthClient userAuthClient;
+        protected FirebaseClient databaseClient;
+
         public AdminService()
         {
-            string adminCreditentials = "Add creditentials here";
+            var configuration = App.AppConfigService;
+
+            var config = new FirebaseAuthConfig
+            {
+                ApiKey = configuration.ApiKey,
+                AuthDomain = configuration.AuthDomain,
+                Providers = new FirebaseAuthProvider[]
+                {
+                    new EmailProvider()
+                }
+            };
 
             FirebaseApp.Create(new AppOptions
             {
-                Credential = GoogleCredential.FromJson(adminCreditentials)
+                Credential = GoogleCredential.FromJson(configuration.AdminCreditentials)
             });
+
+            databaseClient = new FirebaseClient(configuration.WebAddress);
+            userAuthClient = new FirebaseAuthClient(config);
         }
 
-        // We should not have a bool here; replace Task<bool> with Task. 
-        // If something gets wrong, an exception should be thrown
-        // Replace UserData with User
-        public async Task<bool> DeleteUser(UserData userData)
+        private string BuildUserPath(Models.User user)
         {
-            // Extract path building in a separate private method
             string path;
-            if (userData.IsAdmin)
+            if (user.IsAdmin)
             {
-                path = $"/admins/{userData.UserId}";
+                path = $"/admins/{user.UserId}";
             }
             else
             {
-                path = $"/users/{userData.UserId}";
+                path = $"/users/{user.UserId}";
             }
+            return path;
+        }
+
+        public async Task DeleteUser(Models.User user)
+        {
+            string path = BuildUserPath(user);
             try
             {
                 await databaseClient.Child(path).DeleteAsync();
 
-                await FirebaseAuth.DefaultInstance.DeleteUserAsync(userData.UserId);
-
-                return true;
+                await FirebaseAuth.DefaultInstance.DeleteUserAsync(user.UserId);
             }
-            catch (Exception ex)
+            catch
             {
-                return false;
+
             }
         }
 
-        // Replace UserData with User
-        // Replace UpdateUserData with UpdateUser
-        // We should not have a string here; replace Task<string> with Task
         // The User should be updated before calling UpdateUser
         // SRP (Single Responsibility Principle) is violated; this method is doing more than one thing
         // Too many method parameters -> Clean Code
-        public async Task<string> UpdateUserData(UserData userData, string email, bool isAdmin, int accessLevel)
+        public async Task UpdateUser(Models.User user, string email, bool isAdmin, int accessLevel)
         {
-            string result = null;
             string path;
 
-            if (userData.Email != email)
+            if (user.Email != email)
             {
                 UserRecordArgs args = new UserRecordArgs()
                 {
-                    Uid = userData.UserId,
+                    Uid = user.UserId,
                     Email = email,
                 };
                 await FirebaseAuth.DefaultInstance.UpdateUserAsync(args);
             }
 
-            if (userData.IsAdmin != isAdmin) 
+            if (user.IsAdmin != isAdmin) 
             { 
                 if (isAdmin)
                 {
-                    path = $"admins/{userData.UserId}";
+                    path = $"admins/{user.UserId}";
 
-                    var user = new
+                    var newUserData = new
                     {
                         Email = email,
                         AccessLevel = accessLevel,
-                        PreferedAccessMethod = userData.PreferedAccessMethod,
-                        FirstTimeLogin = userData.FirstTimeLogin
+                        PreferedAccessMethod = user.PreferedAccessMethod,
+                        FirstTimeLogin = user.LastLoginDate
                     };
 
                     try
                     {
-                        await databaseClient.Child(path).PutAsync(user);
-                        string oldPath = $"users/{userData.UserId}";
+                        await databaseClient.Child(path).PutAsync(newUserData);
+                        string oldPath = $"users/{user.UserId}";
                         await databaseClient.Child(oldPath).DeleteAsync();
-                        result = null;
                     }
                     catch (Exception ex)
                     {
-                        result = ex.Message;
+
                     }
                 }
-            
             }
             else
             {
-                // Duplicated code -> Code smell
                 if (isAdmin)
                 {
-                    path = $"admins/{userData.UserId}";
+                    path = $"admins/{user.UserId}";
                 }
                 else
                 {
-                    path = $"users/{userData.UserId}";
+                    path = $"users/{user.UserId}";
                 }
                 var updates = new Dictionary<string, object>
                 {
@@ -124,14 +131,80 @@ namespace AccessControlMobileApp.Services
                 try
                 {
                     await databaseClient.Child(path).PatchAsync(updates);
-                    result = null;
                 }
                 catch (Exception ex)
                 {
-                    result = ex.Message;
+
                 }
             }
-            return result;
+        }
+
+        public async Task<List<Log>> RequestAllLogs()
+        {
+            List<Log> logs = new List<Log>();
+
+            try
+            {
+                string path = $"z_logs";
+                var snapshot = await databaseClient.Child(path).OnceAsync<Log>();
+
+                foreach (var childSnapshot in snapshot)
+                {
+                    logs.Add(childSnapshot.Object);
+                }
+            }
+            catch
+            {
+
+            }
+            logs.Reverse();
+            return logs;
+        }
+
+        public async Task<List<Models.User>> RequestAllUsers()
+        {
+            List<Models.User> usersList = new List<Models.User>();
+
+            try
+            {
+                string path = $"admins";
+                var snapshot = await databaseClient.Child(path).OnceAsync<Models.User>();
+
+                foreach (var childSnapshot in snapshot)
+                {
+                    Models.User user = new Models.User(
+                        userId: childSnapshot.Key,
+                        email: childSnapshot.Object.Email,
+                        isAdmin: true,
+                        accessLevel: childSnapshot.Object.AccessLevel,
+                        preferedAccessMethod: childSnapshot.Object.PreferedAccessMethod,
+                        lastLoginDate: childSnapshot.Object.LastLoginDate
+                    );
+
+                    usersList.Add(user);
+                }
+                path = $"users";
+                snapshot = await databaseClient.Child(path).OnceAsync<Models.User>();
+
+                foreach (var childSnapshot in snapshot)
+                {
+                    Models.User user = new Models.User(
+                        userId: childSnapshot.Key,
+                        email: childSnapshot.Object.Email,
+                        isAdmin: false,
+                        accessLevel: childSnapshot.Object.AccessLevel,
+                        preferedAccessMethod: childSnapshot.Object.PreferedAccessMethod,
+                        lastLoginDate: childSnapshot.Object.LastLoginDate
+                    );
+
+                    usersList.Add(user);
+                }
+            }
+            catch (Exception ex)
+            {
+
+            }
+            return usersList;
         }
     }
 }

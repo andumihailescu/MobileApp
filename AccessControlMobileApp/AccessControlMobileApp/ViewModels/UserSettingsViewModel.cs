@@ -89,19 +89,19 @@ namespace AccessControlMobileApp.ViewModels
 
         private void InitializeSettings()
         {
-            if (App.UserService.UserData.PreferedAccessMethod == 0)
+            if (App.UserService.User.PreferedAccessMethod == 0)
             {
                 NfcRadioButtonChecked = true;
                 BluetoothRadioButtonChecked = false;
                 WifiRadioButtonChecked = false;
             }
-            if (App.UserService.UserData.PreferedAccessMethod == 1)
+            if (App.UserService.User.PreferedAccessMethod == 1)
             {
                 NfcRadioButtonChecked = false;
                 BluetoothRadioButtonChecked = true;
                 WifiRadioButtonChecked = false;
             }
-            if (App.UserService.UserData.PreferedAccessMethod == 2)
+            if (App.UserService.User.PreferedAccessMethod == 2)
             {
                 NfcRadioButtonChecked = false;
                 BluetoothRadioButtonChecked = false;

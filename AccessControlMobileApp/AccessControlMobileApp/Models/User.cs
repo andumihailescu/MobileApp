@@ -4,26 +4,26 @@ using System.Text;
 
 namespace AccessControlMobileApp.Models
 {
-    public class UserData
+    public class User
     {
         public string UserId { get; set; }
         public string Email { get; set; }
         public bool IsAdmin { get; set; }
         public int AccessLevel { get; set; }
         public int PreferedAccessMethod { get; set; }
-        public bool FirstTimeLogin { get; set; }
+        public string LastLoginDate { get; set; }
 
-        public UserData(string userId, string email, bool isAdmin, int accessLevel, int preferedAccessMethod, bool firstTimeLogin)
+        public User(string userId, string email, bool isAdmin, int accessLevel, int preferedAccessMethod, string lastLoginDate)
         { 
             this.UserId = userId;
             this.Email = email;
             this.IsAdmin = isAdmin;
             this.AccessLevel = accessLevel;
             this.PreferedAccessMethod = preferedAccessMethod;
-            this.FirstTimeLogin = firstTimeLogin;
+            this.LastLoginDate = lastLoginDate;
         }
 
-        public UserData()
+        public User()
         { 
         
         }

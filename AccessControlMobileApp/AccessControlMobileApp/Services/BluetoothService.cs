@@ -30,39 +30,25 @@ namespace AccessControlMobileApp.Services
 
         public async Task<List<IDevice>> ScanForDevices()
         {
-            bluetoothDevices.Clear();
-
             try
             {
                 if (!bluetoothAdapter.IsScanning)
                 {
                     await bluetoothAdapter.StartScanningForDevicesAsync();
                 }
-
-                // I see no reason to iterate through the ConnectedDevices; why don't you return it?
-                foreach (var device in bluetoothAdapter.ConnectedDevices)
-                    bluetoothDevices.Add(device);
             }
-            catch (Exception ex)
+            catch
             {
-                // throw an exception here, don't write messages to console
-                Console.WriteLine($"Error scanning for BLE devices: {ex.Message}");
+                
             }
-
-            return bluetoothDevices;
+            return (List<IDevice>)bluetoothAdapter.ConnectedDevices;
         }
 
-        // See the comments on AdminService
-        public async Task<bool> ConnectToDevice(object device)
+        public async Task ConnectToDevice(object device)
         {
-
             IDevice selectedItem = device as IDevice;
 
-            if (selectedItem.State == DeviceState.Connected)
-            {
-                return true;
-            }
-            else
+            if (selectedItem.State != DeviceState.Connected)
             {
                 try
                 {
@@ -72,43 +58,27 @@ namespace AccessControlMobileApp.Services
                     var selectedService = servicesListReadOnly[servicesListReadOnly.Count - 1];
                     var charListReadOnly = await selectedService.GetCharacteristicsAsync();
                     characteristic = charListReadOnly[charListReadOnly.Count - 1];
-                    return true;
                 }
-                catch(Exception ex)
+                catch
                 {
-                    Console.WriteLine($"Error connecting to device: {ex.Message}");
-                    return false;
+
                 }
             }
         }
 
-        public async Task<bool> SendMessage(string message)
+        public async Task SendMessage(string message)
         {
             try
             {
-                if (characteristic != null)
+                if ((characteristic != null) && (characteristic.CanWrite))
                 {
-                    if (characteristic.CanWrite)
-                    {
-                        byte[] array = Encoding.UTF8.GetBytes(message);
-                        await characteristic.WriteAsync(array);
-                        return true;
-                    }
-                    else
-                    {
-                        Console.WriteLine("Characteristic does not support Write");
-                        return false;
-                    }
-                }
-                else
-                {
-                    return false;
+                    byte[] array = Encoding.UTF8.GetBytes(message);
+                    await characteristic.WriteAsync(array);
                 }
             }
             catch
             {
-                Console.WriteLine("Error receiving Characteristic");
-                return false;
+                
             }
         }
     }

@@ -12,22 +12,46 @@ using System.Net.Http;
 using FirebaseAdmin.Auth;
 using System.Security.Cryptography;
 using Xamarin.Essentials;
+using Firebase.Auth.Providers;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Configuration.Json;
+using Newtonsoft.Json;
+using System.IO;
+using System.Reflection;
 
 namespace AccessControlMobileApp.Services
 {
-    public class UserService : Database
+    public class UserService
     {
         private UserCredential userAuthCredentials;
 
         public UserCredential UserAuthCredentials { get => userAuthCredentials; private set => userAuthCredentials = value; }
 
-        public UserData UserData { get => userData; set => userData = value; }
+        private FirebaseAuthClient userAuthClient;
+        private FirebaseClient databaseClient;
 
-        private UserData userData;
+        public Models.User User { get => user; set => user = value; }
+
+        private Models.User user;
 
         public UserService()
         {
-            UserData = new UserData();
+            var configuration = App.AppConfigService;
+
+            var config = new FirebaseAuthConfig
+            {
+                ApiKey = configuration.ApiKey,
+                AuthDomain = configuration.AuthDomain,
+                Providers = new FirebaseAuthProvider[]
+                {
+                    new EmailProvider()
+                }
+            };
+
+            databaseClient = new FirebaseClient(configuration.WebAddress);
+            userAuthClient = new FirebaseAuthClient(config);
+
+            User = new Models.User();
         }
 
         public async Task RequestUserData()
@@ -40,7 +64,7 @@ namespace AccessControlMobileApp.Services
                 if (snapshot.Any())
                 {
                     ParseDatabase(snapshot);
-                    UserData.IsAdmin = true;
+                    User.IsAdmin = true;
                 }
             }
             catch (Exception ex)
@@ -55,7 +79,7 @@ namespace AccessControlMobileApp.Services
                 if (snapshot.Any())
                 {
                     ParseDatabase(snapshot);
-                    UserData.IsAdmin = false;
+                    User.IsAdmin = false;
                 } 
             }
             catch (Exception ex)
@@ -72,16 +96,16 @@ namespace AccessControlMobileApp.Services
                 switch (i)
                 {
                     case 0:
-                        UserData.AccessLevel = Convert.ToInt32(item.Object.ToString());
+                        User.AccessLevel = Convert.ToInt32(item.Object.ToString());
                         break;
                     case 1:
-                        UserData.Email = item.Object.ToString();
+                        User.Email = item.Object.ToString();
                         break;
                     case 2:
-                        UserData.FirstTimeLogin = Convert.ToBoolean(item.Object.ToString());
+                        User.LastLoginDate = item.Object.ToString();
                         break;
                     case 3:
-                        UserData.PreferedAccessMethod = Convert.ToInt32(item.Object.ToString());
+                        User.PreferedAccessMethod = Convert.ToInt32(item.Object.ToString());
                         break;
                 }
                 i++;
@@ -90,15 +114,16 @@ namespace AccessControlMobileApp.Services
 
         public async Task<string> LoginUser(string email, string password)
         {
+            string result = null;
             try
             {
                 UserAuthCredentials = await userAuthClient.SignInWithEmailAndPasswordAsync(email, password);
-                return null;
             }
             catch (FirebaseAuthHttpException ex)
             {
-                return ParseErrorMessageFromResponse(ex);
+                result = ParseErrorMessageFromResponse(ex);
             }
+            return result;
         }
 
         public async Task<string> RegisterUser(string email, string password, bool isAdmin, int accessLevel)
@@ -139,7 +164,7 @@ namespace AccessControlMobileApp.Services
                     Email = email,
                     AccessLevel = accessLevel,
                     PreferedAccessMethod = 2,
-                    FirstTimeLogin = true
+                    LastLoginDate = ""
                 };
             
                 try
@@ -174,7 +199,7 @@ namespace AccessControlMobileApp.Services
             string result;
             string userId = UserAuthCredentials.User.Uid;
             string path;
-            if (userData.IsAdmin)
+            if (user.IsAdmin)
             {
                 path = $"admins/{userId}";
             }
@@ -190,7 +215,7 @@ namespace AccessControlMobileApp.Services
             try
             {
                 await databaseClient.Child(path).PatchAsync(updates);
-                userData.PreferedAccessMethod = preferedAccessMethod;
+                user.PreferedAccessMethod = preferedAccessMethod;
                 result = null;
             }
             catch (Exception ex)
@@ -206,7 +231,7 @@ namespace AccessControlMobileApp.Services
             string result;
             try
             {
-                await userAuthClient.SignInWithEmailAndPasswordAsync(userData.Email, oldPassword);
+                await userAuthClient.SignInWithEmailAndPasswordAsync(user.Email, oldPassword);
                 await userAuthClient.User.ChangePasswordAsync(newPassword);
                 result = null;
             }
@@ -214,11 +239,18 @@ namespace AccessControlMobileApp.Services
             {
                 result = ParseErrorMessageFromResponse(ex);
             }
-            if ((result == null) && (UserData.FirstTimeLogin == true))
+            return result;
+        }
+
+        public async Task<string> StoreLastLoginDate()
+        {
+            string result = null;
+
+            if (result == null)
             {
                 string userId = UserAuthCredentials.User.Uid;
                 string path;
-                if (userData.IsAdmin)
+                if (user.IsAdmin)
                 {
                     path = $"admins/{userId}";
                 }
@@ -226,14 +258,15 @@ namespace AccessControlMobileApp.Services
                 {
                     path = $"users/{userId}";
                 }
+                string dateTime = DateTime.Now.ToString();
                 var updates = new Dictionary<string, object>
-            {
-                { "FirstTimeLogin", false }
-            };
+                {
+                    { "LastLoginDate", dateTime }
+                };
                 try
                 {
                     await databaseClient.Child(path).PatchAsync(updates);
-                    userData.FirstTimeLogin = false;
+                    user.LastLoginDate = dateTime;
                     result = null;
                 }
                 catch (Exception ex)
