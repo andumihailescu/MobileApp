@@ -30,6 +30,7 @@ namespace AccessControlMobileApp.Services
 
         public async Task<List<IDevice>> ScanForDevices()
         {
+            bluetoothDevices.Clear();
             try
             {
                 if (!bluetoothAdapter.IsScanning)
@@ -41,7 +42,7 @@ namespace AccessControlMobileApp.Services
             {
                 
             }
-            return (List<IDevice>)bluetoothAdapter.ConnectedDevices;
+            return bluetoothDevices;
         }
 
         public async Task ConnectToDevice(object device)

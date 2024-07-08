@@ -112,18 +112,16 @@ namespace AccessControlMobileApp.Services
             }
         }
 
-        public async Task<string> LoginUser(string email, string password)
+        public async Task LoginUser(string email, string password)
         {
-            string result = null;
             try
             {
                 UserAuthCredentials = await userAuthClient.SignInWithEmailAndPasswordAsync(email, password);
             }
             catch (FirebaseAuthHttpException ex)
             {
-                result = ParseErrorMessageFromResponse(ex);
+                
             }
-            return result;
         }
 
         public async Task<string> RegisterUser(string email, string password, bool isAdmin, int accessLevel)
@@ -266,7 +264,6 @@ namespace AccessControlMobileApp.Services
                 try
                 {
                     await databaseClient.Child(path).PatchAsync(updates);
-                    user.LastLoginDate = dateTime;
                     result = null;
                 }
                 catch (Exception ex)

@@ -20,7 +20,7 @@
 #define SCL_PIN 22
 #define CTRL_PIN 4
 #define REQUIRED_ACCESS_LEVEL 2
-#define GATE_ID "IM414"
+#define GATE_ID "IE303"
 #define SERVICE_UUID        "931058ce-581b-4344-996e-aef3da80fc1d"
 #define CHARACTERISTIC_UUID "7b411f1f-7e30-4fad-98b4-a746544d19cc"
 
@@ -99,7 +99,7 @@ class MyServerCallbacks: public BLEServerCallbacks {
 void configureBle() {
   Serial.println("Starting BLE...");
 
-  BLEDevice::init("AccessControlSystem");
+  BLEDevice::init("RoomIE303");
   pServer = BLEDevice::createServer();
   pServer->setCallbacks(new MyServerCallbacks());
   pService = pServer->createService(SERVICE_UUID);

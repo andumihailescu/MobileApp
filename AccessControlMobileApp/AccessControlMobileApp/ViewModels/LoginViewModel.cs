@@ -40,11 +40,14 @@ namespace AccessControlMobileApp.ViewModels
             }
         }
 
+        private bool firstTimeLogin;
+
         public Command LoginCommand { get; set; }
 
         public LoginViewModel()
         {
             LoginCommand = new Command(async () => await OnLoginClicked());
+            firstTimeLogin = true;
         }
 
         private async Task OnLoginClicked()
@@ -54,14 +57,15 @@ namespace AccessControlMobileApp.ViewModels
             if (result == null)
             {
                 await App.UserService.RequestUserData();
-                await App.UserService.StoreLastLoginDate();
-                if (userService.User.LastLoginDate.Length == 0)
+                if ((userService.User.LastLoginDate.Length == 0) && (firstTimeLogin == true))
                 {
                     Password = "";
                     await Application.Current.MainPage.Navigation.PushModalAsync(new AccountSettingsPage());
+                    firstTimeLogin = false;
                 }
                 else
                 {
+                    await App.UserService.StoreLastLoginDate();
                     Application.Current.MainPage = new RequestAccessPage();
                 }
             }
